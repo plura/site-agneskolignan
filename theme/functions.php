@@ -1,6 +1,12 @@
 <?php
 
 
+add_action( 'wp_head', function() { ?>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<?php }, 1 );
+
 add_action('wp_enqueue_scripts', 'my_theme_enqueue_styles');
 function my_theme_enqueue_styles() {
    wp_enqueue_style('child-style', get_theme_file_uri('/style.css'), [], time());

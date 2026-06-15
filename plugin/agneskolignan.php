@@ -90,40 +90,17 @@ add_filter('style_loader_tag', 'ak_enqueue_integrity', 10, 2 );
 add_filter('script_loader_tag', 'ak_enqueue_integrity', 10, 4);
 
 
- add_action( 'wp_head', function() {
-
-	$config = [];
+add_action( 'wp_head', function() {
 
 	$img = ak_config_bg_image();
 
-	if( $img ) {
+	if( !$img ) return;
 
-		$config['bg'] = 'url("' . $img['url'] . '")';
+	$var = '--ak-config-bg:url("' . $img['url'] . '")';
 
-	}
+	?><style type="text/css">:root {<?php echo $var; ?>}</style><?php
 
-	if( !empty( $config ) ) {
-
-		$vars = [];
-
-		foreach( $config as $k => $v ) {
-
-			$vars[] = '--ak-config-' . $k . ':' . $v;
-
-		}
-
-	}
-
-	?> 
-
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-	<!--<link href="https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Permanent+Marker&display=swap" rel="stylesheet">-->
-	<?php if( !empty( $config ) ): ?><style type="text/css">:root {<?php echo implode(';', $vars) . ';'; ?>}</style><?php endif;
-
- });
+} );
 
 
 

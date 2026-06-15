@@ -1,52 +1,55 @@
-/**
- *	. Group
- *		. Grid
- *		. List
- *	 	. Essential Grid 
- */
-
-
-/* https://cssgradient.io/ */
-
-:root {
-
-	--ak-globals-grid-gap: 1px;
-
-}
-
-
-
-/* Group: Layout Grid  */
+/* group: grid */
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
+	display: flex;
+	flex-wrap: wrap;
 	gap: var(--ak-globals-grid-gap);
 }
 
-
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term) {
-	position: relative;
-
-	/*text-decoration: none;*/
-
-	/* non grid */
 	aspect-ratio: 1 / 1;
+	position: relative;
 	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
 }
 
+:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-related]::before {
+	width: 100%;
+}
+
+@media all and (min-width: 768px) {
+	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"]) {
+		justify-content: center;
+	}
+}
+
+@media all and (min-width: 991px) {
+	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"],[data-n="3"]) {
+		justify-content: center;
+	}
+}
+
+@media all and (min-width: 1200px) {
+	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"],[data-n="3"],[data-n="4"]) {
+		justify-content: center;
+	}
+}
+
+
+/* grid: title overlay */
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:not(.full) :is(.plura-wp-post, .plura-wp-term)::after,
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term) :is(.plura-wp-post-title, .plura-wp-term-title) {
 	align-items: center;
 	background: linear-gradient(0deg, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%);
+	bottom: 0;
 	color: white;
 	display: flex;
 	font-family: var(--wp--preset--font-family--heading);
 	font-weight: var(--ak-globals-theme-font-size-weight-body);
-    height: 100px;
+	height: 100px;
 	justify-content: center;
 	position: absolute;
-	bottom: 0;
 	transition: all .4s ease-out;
-    z-index: auto;
-    width: 100%;	
+	width: 100%;
+	z-index: auto;
 }
 
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:not(.full) :is(.plura-wp-post, .plura-wp-term)::after,
@@ -56,10 +59,15 @@
 
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term) :is(.plura-wp-post-title, .plura-wp-term-title) :is(.plura-wp-post-title-link, .plura-wp-term-title-link) {
 	text-align: center;
+	text-decoration: none;
+}
+
+:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term).full {
+	cursor: pointer;
 }
 
 
-/* Group: Layout Grid (Objects)  */
+/* grid: objects — title fades in on hover */
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-type="object"] :is(.plura-wp-post, .plura-wp-term) :is(.plura-wp-post-title, .plura-wp-term-title) :is(.plura-wp-post-title-link, .plura-wp-term-title-link) {
 	opacity: 0;
 	transition: opacity .4s ease-out;
@@ -70,54 +78,10 @@
 }
 
 
-
-
-/* Group: Layout Grid (flex)  */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-related]::before {
-	width: 100%;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term) {
-	aspect-ratio: 1 / 1;
-	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
-}
-
-@media all and (min-width: 768px) {
-
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"]) {
-		justify-content: center;
-	}
-
-}
-
-@media all and (min-width: 991px) {
-
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"],[data-n="3"]) {
-		justify-content: center;
-	}
-
-}
-
-@media all and (min-width: 1200px) {
-
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:is([data-n="1"],[data-n="2"],[data-n="3"],[data-n="4"]) {
-		justify-content: center;
-	}
-
-}
-
-
-
-
-/* animation */
+/* grid: hover animations */
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term)::before {
 	filter: blur(0);
-	transition: background-size .4s ease-out;	
+	transition: background-size .4s ease-out;
 }
 
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term):hover::before {
@@ -137,14 +101,3 @@
 	background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.8) 100%);
 	height: 100%;
 }
-
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term).full {
-	cursor: pointer;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term) :is(.plura-wp-post-title, .plura-wp-term-title) :is(.plura-wp-post-title-link, .plura-wp-term-title-link) {
-	text-decoration: none;
-}
-
-

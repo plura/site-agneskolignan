@@ -6,6 +6,33 @@ function my_theme_enqueue_styles() {
    wp_enqueue_style('child-style', get_theme_file_uri('/style.css'), [], time());
 }
 
+add_action( 'wp_enqueue_scripts', 'ak_theme_styles' );
+function ak_theme_styles() {
+	$scripts = [
+		__DIR__ . '/assets/css/base.css',
+		__DIR__ . '/assets/css/layout.css',
+		__DIR__ . '/assets/css/grid.css',
+		__DIR__ . '/assets/css/theme.css',
+		__DIR__ . '/assets/js/scripts.js' => ['handle' => 'ak-core', 'module' => true],
+	];
+
+	if ( is_singular( ['ak_exhibition', 'ak_object'] ) ) {
+		$scripts = [
+			...$scripts,
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css'           => ['handle' => 'fancybox'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js'        => ['handle' => 'fancybox'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css'             => ['handle' => 'panzoom'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js'         => ['handle' => 'panzoom'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.css'           => ['handle' => 'carousel'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.umd.js'       => ['handle' => 'carousel'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.css'   => ['handle' => 'carousel-thumbs'],
+			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.umd.js' => ['handle' => 'carousel-thumbs'],
+		];
+	}
+
+	plura_wp_enqueue( scripts: $scripts, prefix: 'ak-', cache: false );
+}
+
 
 
 define('AK_PAGE_CLIENTS', 932);

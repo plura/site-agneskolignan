@@ -38,39 +38,6 @@ function ak_init() {
 }
 
 
-function ak_styles() {
-
-	$scripts = [
-		__DIR__ . '/assets/css/globals.css',
-		__DIR__ . '/assets/css/globals-theme.css',
-		__DIR__ . '/assets/css/globals-theme-fonts.css',
-		__DIR__ . '/assets/css/globals-theme-grid.css',
-		__DIR__ . '/assets/js/scripts.js' => ['handle' => 'ak-core'],
-	];
-
-	if( is_singular( ['ak_exhibition', 'ak_object'] ) ) {
-
-		$scripts = [
-			...$scripts,
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css' => ['handle' => 'fancybox'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js' => ['handle' => 'fancybox'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.css' => ['handle' => 'panzoom'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/panzoom/panzoom.umd.js' => ['handle' => 'panzoom'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.css' => ['handle' => 'carousel'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.umd.js' => ['handle' => 'carousel'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.css' => ['handle' => 'carousel-thumbs'],
-			'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/carousel/carousel.thumbs.umd.js' => ['handle' => 'carousel-thumbs']
-		];
-
-	}
-
-	plura_wp_enqueue( scripts: $scripts, prefix: 'ak-', cache: false );
-
-}
-
-add_action( 'wp_enqueue_scripts', 'ak_styles' );
-
-
 add_action( 'admin_enqueue_scripts', function() {
 
 	//plura_wp_enqueue( scripts: [__DIR__ . '/assets/css/admin.css'], prefix: 'ak-', cache: true );

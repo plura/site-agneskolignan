@@ -39,7 +39,18 @@ Each object has the following fields:
 - **Collections:** Indicate which collection(s) the object belongs to.
 - **Tags:** Add descriptive tags for categorization and filtering. Examples: "Floral", "Womenswear", "Minimal", "Gold".
 
-## Notes
+## Development Notes
+
+### Collections URL routing
+
+The plugin adds rewrite rules that support the following URL structures:
+
+- `/collections/{collection}/` — all objects in a collection
+- `/collections/{collection}/{client}/` — objects in a collection filtered by client (used when a collection spans multiple clients)
+
+These are parsed during `init` into query vars `ak_object_collection` and `ak_object_collection_client`, accessible via `get_query_var()`.
+
+## Reference
 
 - https://fullsiteediting.com/lessons/creating-block-templates-for-custom-post-types/
 - https://imranhsayed.medium.com/adding-rewrite-rules-in-wordpress-tutorial-b8603a37dcab

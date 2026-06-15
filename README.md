@@ -4,15 +4,11 @@ WordPress site for [agneskolignan.com](https://agneskolignan.com).
 
 ## Structure
 
+Both `theme/` and `plugin/` depend on the [Plura WP Plugin](https://github.com/plura/wp-plugin-plura/) being active.
+
 - `theme/` — Custom theme, deployed to `/wp-content/themes/agneskolignan/`
 - `plugin/` — Custom plugin, deployed to `/wp-content/plugins/agneskolignan/`
 - `other-plugins/` — Third-party plugins tracked in the repo
-
-## Plugins
-
-### Plura WP Plugin
-
-This site uses the [Plura WP Plugin](https://github.com/plura/wp-plugin-plura/).
 
 ## Data Entry Instructions
 

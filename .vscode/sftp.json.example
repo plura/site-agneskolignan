@@ -1,0 +1,28 @@
+[
+    {
+        "name": "agneskolignan - theme",
+        "context": "theme",
+        "host": "",
+        "protocol": "ftp",
+        "port": 21,
+        "username": "",
+        "password": "",
+        "remotePath": "/public_html/wp-content/themes/agneskolignan/",
+        "uploadOnSave": false,
+        "useTempFile": false,
+        "openSsh": false
+    },
+    {
+        "name": "agneskolignan - plugin",
+        "context": "plugin",
+        "host": "",
+        "protocol": "ftp",
+        "port": 21,
+        "username": "",
+        "password": "",
+        "remotePath": "/public_html/wp-content/plugins/agneskolignan/",
+        "uploadOnSave": false,
+        "useTempFile": false,
+        "openSsh": false
+    }
+]

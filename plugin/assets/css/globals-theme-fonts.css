@@ -1,0 +1,144 @@
+:root {
+
+  --ak-globals-theme-font-heading: "Permanent Marker", cursive; /*"Nothing You Could Do", cursive; */
+  --ak-globals-theme-font-body: "Open Sans", sans-serif;
+
+  --ak-globals-theme-increment: .8;
+  --ak-globals-theme-line-height-increment-header: 25 / 20;
+  --ak-globals-theme-line-height-increment-body: 32 / 20;
+
+  --ak-globals-theme-font-size-h1: calc( 52px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-h2: calc( 43px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-h3: calc( 34px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-h4: calc( 25px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-body: calc( 16px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-small: calc( 14px * var(--ak-globals-theme-increment) );
+  --ak-globals-theme-font-size-xsmall: calc( 12px * var(--ak-globals-theme-increment) );
+
+  --ak-globals-theme-font-line-height-h1: calc( var(--ak-globals-theme-font-size-h1) * var(--ak-globals-theme-line-height-increment-header) );
+  --ak-globals-theme-font-line-height-h2: calc( var(--ak-globals-theme-font-size-h2) * var(--ak-globals-theme-line-height-increment-header) );
+  --ak-globals-theme-font-line-height-h3: calc( var(--ak-globals-theme-font-size-h3) * var(--ak-globals-theme-line-height-increment-header) );
+  --ak-globals-theme-font-line-height-h4: calc( var(--ak-globals-theme-font-size-h4) * var(--ak-globals-theme-line-height-increment-header) );
+
+  --ak-globals-theme-font-line-height-body: calc( var(--ak-globals-theme-font-size-body) * var(--ak-globals-theme-line-height-increment-body) );
+  --ak-globals-theme-font-line-height-small: calc( var(--ak-globals-theme-font-size-small) * var(--ak-globals-theme-line-height-increment-body) );
+  --ak-globals-theme-font-line-height-xsmall: calc( var(--ak-globals-theme-font-size-xsmall) * var(--ak-globals-theme-line-height-increment-body) );
+  
+  --ak-globals-theme-font-size-weight-body: 400;
+  --ak-globals-theme-font-size-weight-semibold: 500;
+  --ak-globals-theme-font-size-weight-bold: 600;
+  --ak-globals-theme-font-size-weight-xtra-bold: 700;
+
+}
+
+@media (min-width: 768px) {
+
+  :root {
+      --ak-globals-theme-increment: .9;
+  }
+
+}
+
+@media (min-width: 991px) {
+
+  :root {
+      --ak-globals-theme-increment: 1;
+  }
+
+}
+
+
+/*
+
+<uniquifier>: Use a unique and descriptive class name
+<weight>: Use a value from 400 to 700
+
+*/
+
+
+h1 {
+  font-size: var(--ak-globals-theme-font-size-h1);
+  line-height: var(--ak-globals-theme-font-line-height-h1);
+}
+
+h2 {
+  font-size: var(--ak-globals-theme-font-size-h2);
+  line-height: var(--ak-globals-theme-font-line-height-h2);
+}
+
+h3 {
+  font-size: var(--ak-globals-theme-font-size-h3);
+  line-height: var(--ak-globals-theme-font-line-height-h3);
+}
+
+h4 {
+  font-size: var(--ak-globals-theme-font-size-h4);
+  line-height: var(--ak-globals-theme-font-line-height-h4);
+}
+
+body {
+  font-family: var(--ak-globals-theme-font-body);
+  line-height: var(--ak-globals-theme-font-line-height-body);
+}
+
+
+
+
+
+header nav .wp-block-navigation-item .wp-block-navigation-item__content,
+
+.ak-title-breadcrumbs .p-title,
+:is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,
+
+.single-ak_object .ak-object-core .ak-object-info-toggle-trigger::after {
+    font-family: var(--ak-globals-theme-font-heading);
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+:is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,
+.single-ak_object .ak-object-core .ak-object-info-toggle-trigger::after {
+  font-size: var(--ak-globals-theme-font-size-small);
+  letter-spacing: 2px;
+}
+
+:is(.plura-wp-posts, .plura-wp-terms)[data-label]::before {
+  text-transform: none;
+}
+
+
+
+/* Layout */
+.ak-title-breadcrumbs .p-title {
+   font-size: var(--ak-globals-theme-font-size-h1);
+  line-height: var(--ak-globals-theme-font-line-height-h1); 
+}
+
+/* Object */
+.ak-object-info-holder .ak-title-breadcrumbs .p-title {
+  font-size: var(--ak-globals-theme-font-size-h2);
+  line-height: var(--ak-globals-theme-font-line-height-h2);
+}
+
+
+
+
+/*
+.cardo-regular {
+  font-family: "Cardo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cardo-bold {
+  font-family: "Cardo", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.cardo-regular-italic {
+  font-family: "Cardo", serif;
+  font-weight: 400;
+  font-style: italic;
+} */

@@ -1,0 +1,47 @@
+#poststuff .ak-admin-docs {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem; /* base font size */
+	color: #333;
+	line-height: 1.5;
+}
+
+#poststuff .ak-admin-docs h2 {
+	font-weight: 600;
+	font-size: clamp(1.25rem, 1.1rem + 1vw, 1.5rem); /* responsive heading */
+	margin-top: 1.5rem;
+	margin-bottom: 0.75rem;
+	padding: 0;
+}
+
+#poststuff .ak-admin-docs ul {
+	list-style-type: disc;
+	padding-left: 1.25rem; /* indent lists */
+	margin-top: 0;
+	margin-bottom: 1rem;
+	font-size: 1rem; /* fixed same font size for all lists */
+}
+
+#poststuff .ak-admin-docs ul ul {
+	padding-left: 1.25rem; /* maintain indent for nested lists but no font size change */
+	font-size: 1rem; /* keep font size consistent */
+}
+
+#poststuff .ak-admin-docs li {
+	margin-bottom: 0.5rem;
+	font-size: 1rem; /* consistent font size for list items */
+}
+
+#poststuff .ak-admin-docs small,
+#poststuff .ak-admin-docs small.note,
+#poststuff .ak-admin-docs span.example {
+	font-size: 0.875rem; /* smaller but consistent size */
+	color: #666;
+	display: block;
+	margin-top: 0.25rem;
+	margin-bottom: 0.5rem;
+}
+
+#poststuff .ak-admin-docs span.example {
+	color: #444;
+	font-style: italic;
+}

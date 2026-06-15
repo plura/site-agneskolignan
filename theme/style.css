@@ -1,0 +1,57 @@
+/*
+Theme Name:   Agnes Kolignan
+Theme URI:    http://example.com/twenty-twentyfour-child/
+Description:  Twenty Twenty-Four Child Theme
+Author:       B
+Author URI:   http://example.com
+Template:     twentytwentyfour
+Version:      1.0.1
+License:      GNU General Public License v2 or later
+License URI:  http://www.gnu.org/licenses/gpl-2.0.html
+Tags:         light, dark, two-columns, right-sidebar, responsive-layout, accessibility-ready
+Text Domain:  twentytwentyfourchild
+*/
+
+
+
+/* center nav */
+
+/*body { overflow: hidden !important; }*/
+
+@media all and (min-width: 991px) {
+
+	header nav {
+		padding-left: calc( 10px * 2 );
+		/*padding-right: calc( 55px * 2 );*/
+		/*padding-left: calc( 94px - 17px );*/
+	}
+
+}
+
+
+
+
+
+
+
+footer #sb_instagram .sbi_follow_btn.sbi_custom a {
+	color: black;
+	background-color: transparent !important;
+	font-family: var(--ak-globals-theme-font-heading);
+}
+
+/* fixes a bug where a slideshow shows an extra thumb */
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error {
+	display: none;
+}
+
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p {
+	display: contents;
+	visibility: collapse;
+}
+
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p a {
+	font-size: 0;
+	visibility: visible;
+}
+

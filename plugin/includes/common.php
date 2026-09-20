@@ -187,11 +187,14 @@ function ak_posts_grid_item( WP_Post $post, bool $full = true ): string {
 
 	if( $img ) {
 
-		$atts = array_merge( $atts, [
+		$atts = array_merge_recursive( $atts, [
+
+			'class' => ['has-img'],
 
 			'data-bg-dir' => $img[1] >= $img[2] ? 'l' : 'p',
 
-			'style' => "background-image: url('" . $img[0] . "');",
+			'style' => '--ak-bg-img: url(\'' . $img[0] . '\');',
+			//'style' => "background-image: url('" . $img[0] . "');",
 
 		]);
 
@@ -225,9 +228,18 @@ function ak_posts_grid_item( WP_Post $post, bool $full = true ): string {
 
 
 
-function ak_post_featured_image( int $postID, string $size = 'medium' ): array|bool {
+/**
+ * Post: Featured Image
+ *
+ * @param int         $postID  Post to resolve the image for.
+ * @param string      $size    Requested size (currently advisory — the first size that
+ *                             resolves from the list below wins).
+ * @param string|null $gallery Optional ACF gallery field name to fall back to.
+ * @return array|bool wp_get_attachment_image_src() result, or false.
+ */
+function ak_post_featured_image( int $postID, string $size = 'medium', ?string $gallery = null ): array|bool {
 
-	$id = ak_post_featured_image_id( $postID );
+	$id = ak_post_featured_image_id( $postID, $gallery );
 
 	if( $id ) {
 
@@ -250,22 +262,40 @@ function ak_post_featured_image( int $postID, string $size = 'medium' ): array|b
 }
 
 
-//Post: Featured Image ID
-function ak_post_featured_image_id( int $postID ): string|bool {
+/**
+ * Post: Featured Image ID
+ *
+ * Resolution order: post thumbnail, then the per-type ak_{type}_featured_image_id() hook,
+ * then the first image of $gallery.
+ *
+ * @param int         $postID  Post to resolve the image for.
+ * @param string|null $gallery Optional ACF gallery field name to fall back to.
+ * @return string|bool Attachment ID, or false.
+ */
+function ak_post_featured_image_id( int $postID, ?string $gallery = null ): string|bool {
 
 	if( has_post_thumbnail( $postID ) ) {
 
 		return get_post_thumbnail_id( $postID );
 
-	} else {
+	}
 
-		$type = preg_replace('/(ak_)?([a-z]+)/', '$2', get_post( $postID )->post_type );
+	$type = preg_replace('/(ak_)?([a-z]+)/', '$2', get_post( $postID )->post_type );
 
-		if( function_exists('ak_' . $type . '_featured_image_id') ) {
+	if( function_exists('ak_' . $type . '_featured_image_id') && $id = ('ak_' . $type . '_featured_image_id')( $postID ) ) {
 
-			return ('ak_' . $type . '_featured_image_id')( $postID );
+		return $id;
 
-		}
+	}
+
+	// For post types carrying a gallery but no thumbnail, such as exhibitions.
+	if( $gallery && $images = get_field( $gallery, $postID ) ) {
+
+		$first = reset( $images );
+
+		// ACF returns gallery items as image arrays, IDs or URLs depending on field config;
+		// only the first two yield an attachment ID.
+		return is_array( $first ) ? ( $first['ID'] ?? false ) : ( is_numeric( $first ) ? (int) $first : false );
 
 	}
 
@@ -327,7 +357,7 @@ add_shortcode('ak-gallery', function( $args) {
 
 		if( is_singular('ak_' . $args['posttype']) ) {
 
-			$atts['id'] = plura_wpml_id( get_the_ID() );
+			$atts['id'] = function_exists('plura_wpml_id') ? plura_wpml_id( get_the_ID() ) : get_the_ID();
 
 		} else {
 
@@ -425,15 +455,18 @@ function ak_taxonomy_grid_item( $term, bool $full = true ): string {
 
 	if( $img ) {
 
-		$atts = array_merge( $atts, [
+		$atts = array_merge_recursive( $atts, [
+
+			'class' => ['has-img'],
 
 			'data-bg-dir' => $img[1] >= $img[2] ? 'l' : 'p',
 
-			'style' => "background-image: url('" . $img[0] . "');",
+			'style' => '--ak-bg-img: url(\'' . $img[0] . '\');',
+			//'style' => "background-image: url('" . $img[0] . "');",
 
 		]);
 
-		$atts['style'] = "background-image: url('" . $img[0] . "');";
+		/* $atts['style'] = "background-image: url('" . $img[0] . "');"; */
 
 	}
 

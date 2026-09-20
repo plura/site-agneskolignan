@@ -1,0 +1,111 @@
+/**
+ * Migration: modern plura_wp_posts() markup styled to match the legacy grid.
+ *
+ * Opt-in via class="grid" on the shortcode, so only containers already migrated pick
+ * these rules up — the object and term grids keep rendering through ak_posts_grid_item()
+ * and keep using grid.css. Once every post type has moved across, grid.css and the
+ * ak_*_grid_item() builders go away and this becomes the grid stylesheet.
+ *
+ * Per-type tweaks layer on with .plura-wp-posts.grid[data-type="…"].
+ *
+ * Expects [plura-wp-posts type="…" context="…" link="1" class="grid"].
+ */
+
+
+/* grid: container — layout.css sets display:grid on every .plura-wp-posts, so the
+   flex layout has to be restated rather than inherited. */
+.plura-wp-posts.grid {
+	--n: 2;
+
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ak-globals-grid-gap);
+	justify-content: center;
+}
+
+@media all and (min-width: 768px) {
+	.plura-wp-posts.grid { --n: 3; }
+}
+
+@media all and (min-width: 991px) {
+	.plura-wp-posts.grid { --n: 4; }
+}
+
+@media all and (min-width: 1200px) {
+	.plura-wp-posts.grid { --n: 5; }
+}
+
+
+/* grid: item — an <a> under link="1", so the whole tile is the link and no cursor or
+   click handler is needed. */
+.plura-wp-posts.grid .plura-wp-post {
+	aspect-ratio: 1 / 1;
+	display: block;
+	overflow: hidden;
+	position: relative;
+	text-decoration: none;
+	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
+}
+
+
+/* grid: image — a real <img> rather than a CSS background, so the zoom and blur the
+   legacy grid declared on ::before (and never rendered, lacking a content property)
+   actually work here. */
+.plura-wp-posts.grid .plura-wp-post-featured-image {
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	transition: filter .4s ease-out, transform .4s ease-out;
+	width: 100%;
+}
+
+.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-featured-image {
+	filter: blur(4px);
+	transform: scale(1.15);
+}
+
+
+/* grid: title overlay */
+.plura-wp-posts.grid .plura-wp-post-title {
+	align-items: center;
+	background: linear-gradient(0deg, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%);
+	bottom: 0;
+	color: white;
+	display: flex;
+	font-family: var(--wp--preset--font-family--heading);
+	font-weight: var(--ak-globals-theme-font-size-weight-body);
+	height: 100px;
+	justify-content: center;
+	margin: 0;
+	position: absolute;
+	text-align: center;
+	transition: all .4s ease-out;
+	width: 100%;
+	z-index: 1;
+}
+
+.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-title {
+	background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.8) 100%);
+	height: 100%;
+}
+
+
+/* grid: excerpt — provisional. The legacy grid had no excerpt, so rather than invent a
+   resting-state layout it rides the hover overlay, under the title. */
+.plura-wp-posts.grid .plura-wp-post-excerpt {
+	color: white;
+	left: 0;
+	opacity: 0;
+	padding: 0 1.5rem;
+	position: absolute;
+	text-align: center;
+	top: 60%;
+	transition: opacity .4s ease-out;
+	width: 100%;
+	z-index: 2;
+}
+
+.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-excerpt {
+	opacity: 1;
+}

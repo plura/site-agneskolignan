@@ -19,6 +19,7 @@ function ak_theme_styles() {
 		__DIR__ . '/assets/css/layout.css',
 		__DIR__ . '/assets/css/grid.css',
 		__DIR__ . '/assets/css/theme.css',
+		__DIR__ . '/assets/css/migration.css',
 		__DIR__ . '/assets/js/scripts.js' => ['handle' => 'ak-core', 'module' => true],
 	];
 

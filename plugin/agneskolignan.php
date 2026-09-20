@@ -17,6 +17,7 @@ add_action('plugins_loaded', function () {
 		'includes/clients',
 		'includes/common',
 		'includes/config',
+		'includes/exhibitions',
 		'includes/objects',
 		'includes/objects-collections'
 	], __DIR__);

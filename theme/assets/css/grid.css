@@ -11,6 +11,12 @@
 	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
 }
 
+
+:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term).has-img {
+	background: transparent var(--ak-bg-img) center / cover no-repeat;
+}
+
+
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-related]::before {
 	width: 100%;
 }

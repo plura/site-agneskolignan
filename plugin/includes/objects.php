@@ -72,7 +72,7 @@ function ak_objects_query_vars(
 			$tax[] = [
 				'taxonomy' => 'ak_object_' . $taxKey,
 				'field'    => 'term_id',
-				'terms'    => plura_wpml_id((array) $termIDs),
+				'terms'    => function_exists('plura_wpml_id') ? plura_wpml_id((array) $termIDs) : (array) $termIDs,
 			];
 		}
 	}

@@ -12,6 +12,8 @@
 
 const AK_EXHIBITIONS_CONTEXT = 'exhibitions';
 
+const AK_EXHIBITIONS_GALLERY = 'ak_exhibition_gallery';
+
 
 /**
  * Keep only the parts the grid shows, dropping datetime, meta, timeline, content and
@@ -68,7 +70,21 @@ add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $p
 
 	}
 
-	$id = ak_post_featured_image_id( $post->ID, 'ak_exhibition_gallery' );
+	// Kept self-contained rather than routed through ak_post_featured_image_id(), which
+	// is legacy and goes when the migration finishes.
+	$gallery = get_field( AK_EXHIBITIONS_GALLERY, $post->ID );
+
+	if( ! $gallery ) {
+
+		return null;
+
+	}
+
+	$first = reset( $gallery );
+
+	// ACF returns gallery items as image arrays, IDs or URLs depending on field config;
+	// only the first two yield an attachment ID.
+	$id = is_array( $first ) ? ( $first['ID'] ?? null ) : ( is_numeric( $first ) ? $first : null );
 
 	return $id ? plura_wp_image( (int) $id, $size, $atts ) : null;
 

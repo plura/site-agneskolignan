@@ -131,3 +131,37 @@ add_filter('body_class', function( $classes ) {
 	return array_merge($classes, $c);
 
 } ); 
+
+
+/**
+ * Render Plura shortcodes in the block editor without wpautop.
+ *
+ * WordPress' core/shortcode block renders as `return wpautop( $content )`, which injects
+ * <p> tags into the shortcode's markup. Where the output nests block elements inside an
+ * anchor — a plura-wp-posts grid under link="1" — the browser splits the anchor on the
+ * stray <p> and the markup falls apart. Classic-theme Plura sites never hit this:
+ * do_shortcode() runs at priority 11 on the_content, after wpautop at 10.
+ *
+ * @param string $html  Rendered block HTML.
+ * @param array  $block Parsed block.
+ * @return string
+ */
+add_filter('render_block', function( string $html, array $block ): string {
+
+	if( ( $block['blockName'] ?? '' ) !== 'core/shortcode' ) {
+
+		return $html;
+
+	}
+
+	$shortcode = $block['innerHTML'] ?? '';
+
+	if( ! str_contains( $shortcode, '[plura-wp-' ) ) {
+
+		return $html;
+
+	}
+
+	return do_shortcode( $shortcode );
+
+}, 10, 2);

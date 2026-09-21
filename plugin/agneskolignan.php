@@ -155,6 +155,18 @@ add_filter('render_block', function( string $html, array $block ): string {
 
 	$source = trim( $block['innerHTML'] ?? '' );
 
+	// TEMPORARY probe: reports every block on the way to the grid, so the one that owns
+	// the shortcode can be identified from a page fetch. Remove with the other markers.
+	if( str_contains( $html, 'plura-wp-posts' ) || str_contains( $source, 'plura-wp-' ) ) {
+
+		$html = '<!-- ak-probe name=' . ( $block['blockName'] ?? 'NULL' )
+			. ' innerHTML=' . strlen( $source )
+			. ' innerContent=' . count( $block['innerContent'] ?? [] )
+			. ' src="' . esc_attr( substr( str_replace( ['--', "\n", "\r"], ['..', ' ', ' '], $source ), 0, 180 ) )
+			. '" -->' . $html;
+
+	}
+
 	if( ! preg_match('#^(?:<p[^>]*>)?\s*(\[plura-wp-[^\]]*\])\s*(?:</p>)?$#s', $source, $shortcode ) ) {
 
 		return $html;

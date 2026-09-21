@@ -136,16 +136,16 @@ add_filter('body_class', function( $classes ) {
 /**
  * Render Plura shortcodes in the block editor without wpautop.
  *
- * Several core blocks autop their contents — core/shortcode is literally
- * `return wpautop( $content )`, and Paragraph and Classic blocks wrap in <p> too. That
- * injects <p> into the shortcode's markup, and where the output nests block elements
- * inside an anchor — a plura-wp-posts grid under link="1" — the anchor is split and the
- * grid falls apart. Classic-theme Plura sites never hit this: there do_shortcode() runs
- * at priority 11 on the_content, after wpautop at 10.
+ * WordPress' core/shortcode block renders as `return wpautop( $content )`. On this site
+ * the block's innerHTML already arrives with shortcodes expanded, so that wpautop() runs
+ * over finished grid markup: it breaks lines around every <h3> and <div> and opens a <p>
+ * before each </a>. Under link="1" the item wrapper is an anchor, so the browser then
+ * splits it and the grid collapses. Classic-theme Plura sites never hit this — there
+ * do_shortcode() runs at priority 11 on the_content, after wpautop at 10.
  *
- * Deliberately keyed on the block's content rather than its blockName, since which block
- * holds the shortcode is an editing choice. It only fires when the block is nothing but a
- * single Plura shortcode, so blocks mixing prose with a shortcode keep their autop.
+ * Returning the block's own content skips the core callback entirely. do_shortcode() is
+ * kept for the case where innerHTML still holds an unexpanded shortcode; it is a no-op
+ * once there is nothing left to expand.
  *
  * @param string $html  Rendered block HTML.
  * @param array  $block Parsed block.
@@ -153,27 +153,21 @@ add_filter('body_class', function( $classes ) {
  */
 add_filter('render_block', function( string $html, array $block ): string {
 
-	$source = trim( $block['innerHTML'] ?? '' );
-
-	// TEMPORARY probe: reports every block on the way to the grid, so the one that owns
-	// the shortcode can be identified from a page fetch. Remove with the other markers.
-	if( str_contains( $html, 'plura-wp-posts' ) || str_contains( $source, 'plura-wp-' ) ) {
-
-		$html = '<!-- ak-probe name=' . ( $block['blockName'] ?? 'NULL' )
-			. ' innerHTML=' . strlen( $source )
-			. ' innerContent=' . count( $block['innerContent'] ?? [] )
-			. ' src="' . esc_attr( substr( str_replace( ['--', "\n", "\r"], ['..', ' ', ' '], $source ), 0, 180 ) )
-			. '" -->' . $html;
-
-	}
-
-	if( ! preg_match('#^(?:<p[^>]*>)?\s*(\[plura-wp-[^\]]*\])\s*(?:</p>)?$#s', $source, $shortcode ) ) {
+	if( ( $block['blockName'] ?? '' ) !== 'core/shortcode' ) {
 
 		return $html;
 
 	}
 
-	return '<!-- ak-bypass-hit -->' . do_shortcode( $shortcode[1] );
+	$source = trim( $block['innerHTML'] ?? '' );
+
+	if( ! str_contains( $source, 'plura-wp-' ) ) {
+
+		return $html;
+
+	}
+
+	return do_shortcode( $source );
 
 }, 10, 2);
 

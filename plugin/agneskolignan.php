@@ -171,13 +171,3 @@ add_filter('render_block', function( string $html, array $block ): string {
 
 }, 10, 2);
 
-
-/**
- * TEMPORARY diagnostic: prints the deployed mtime of this file, so a page fetch shows
- * which version of the plugin is actually live. Remove once the wpautop issue is closed.
- */
-add_action('wp_head', function() {
-
-	echo "\n<!-- ak-build: " . gmdate( 'Y-m-d H:i:s', filemtime( __FILE__ ) ) . " -->\n";
-
-}, 1);

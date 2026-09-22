@@ -101,9 +101,9 @@
    resting-state layout it rides the hover overlay, under the title. */
 .plura-wp-posts.grid .plura-wp-post-excerpt {
 	color: white;
-	font-size: var(--ak-globals-theme-font-size-small);
+	font-size: var(--ak-globals-theme-font-size-xsmall);
 	left: 0;
-	line-height: var(--ak-globals-theme-font-line-height-small);
+	line-height: var(--ak-globals-theme-font-line-height-xsmall);
 	opacity: 0;
 	padding: 0 1.5rem;
 	position: absolute;

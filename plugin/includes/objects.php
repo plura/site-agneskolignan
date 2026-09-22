@@ -318,11 +318,9 @@ function ak_object_info(
 		taxonomy: false
 	);
 
-	$html_meta = [];
+	$meta = [];
 
 	foreach( ak_object_info_fields() as $field => $label ) {
-
-		$atts_meta_item_value = ['class' => 'plura-wp-post-meta-item-value'];
 
 		//skip field if key is found in excluded array
 		if( $exclude && in_array($field, (array) $exclude) ) {
@@ -335,33 +333,54 @@ function ak_object_info(
 
 		}
 
-		$info = get_field('ak_' . $type . '_' . $field, $id);
+		$meta[ $field ] = [
 
-		if( empty($info) || ( preg_match('/(client)/', $field) && ak_client_ignore( $info->ID ) ) ) {
+			'key' => 'ak_' . $type . '_' . $field,
 
-			continue;
+			'label' => $label,
 
-		}
+			'raw_html' => true,
 
-		$value = sprintf('<span %s>%s</span>', plura_attributes($atts_meta_item_value), $info instanceof WP_Post ? $info->post_title : $info);
+			/**
+			 * plura_wp_post_meta() calls this with the value alone, which is all either job
+			 * needs. Returning '' drops the row, since skip_empty defaults on.
+			 *
+			 * @param mixed $value Field value; a WP_Post for relationship fields.
+			 * @return string
+			 */
+			'sanitize_callback' => function( mixed $value ) use ( $field ): string {
 
-		if( $info instanceof WP_Post ) {
+				// Mirrors the original empty() test: skip_empty only recognises null and '',
+				// and a non-scalar left in place would trip the plugin's warning path.
+				if( empty( $value ) ) {
 
-			$value = plura_wp_link(html: $value, target: $info);
+					return '';
 
-		}
+				}
 
-		$atts_meta_item = ['class' => 'plura-wp-post-meta-item', 'data-label' => $label];
+				if( $value instanceof WP_Post ) {
 
-		$html_meta[] = "<div " . plura_attributes( $atts_meta_item ) . ">" . $value . "</div>";
+					return preg_match('/(client)/', $field) && ak_client_ignore( $value->ID )
+						? ''
+						: plura_wp_link( html: esc_html( $value->post_title ), target: $value );
+
+				}
+
+				return esc_html( $value );
+
+			}
+
+		];
 
 	}
 
-	if( !empty( $html_meta ) ) {
+	if( !empty( $meta ) ) {
 
-		$atts_meta = ['class' => 'plura-wp-post-meta', 'data-type' => $type];
-
-		$html[] = "<div " . plura_attributes( $atts_meta ) . ">" . implode('', $html_meta) . "</div>";
+		$html[] = plura_wp_post_meta(
+			post: $id,
+			meta: $meta,
+			label_as_data_attr: true
+		);
 
 	}
 

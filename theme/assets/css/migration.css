@@ -37,11 +37,15 @@
 
 
 /* grid: item — an <a> under link="1", so the whole tile is the link and no cursor or
-   click handler is needed. */
+   click handler is needed. A flex column keeps the title and excerpt in normal flow,
+   which is what the padding acts on; the image and scrim sit behind, out of flow. */
 .plura-wp-posts.grid .plura-wp-post {
 	aspect-ratio: 1 / 1;
-	display: block;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 	overflow: hidden;
+	padding: 1.5rem;
 	position: relative;
 	text-decoration: none;
 	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
@@ -66,54 +70,59 @@
 }
 
 
-/* grid: title overlay.
-   The legacy title was a <div> inheriting body size; here it is an <h3>, which picks up
-   base.css's h3 rule — more than double the size — so size and line-height are restated.
-   Legacy put color and centring on .plura-wp-post-title-link; with link="1" there is no
-   inner anchor, so they live on the title itself and text-decoration on the item. */
-.plura-wp-posts.grid .plura-wp-post-title {
-	align-items: center;
+/* grid: scrim — the gradient the legacy grid hung off the title element. Detaching it
+   onto a pseudo element leaves the tile's padding governing the text alone. */
+.plura-wp-posts.grid .plura-wp-post::before {
 	background: linear-gradient(0deg, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%);
 	bottom: 0;
-	color: white;
-	display: flex;
-	font-family: var(--wp--preset--font-family--heading);
-	font-size: var(--ak-globals-theme-font-size-body);
-	font-weight: var(--ak-globals-theme-font-size-weight-body);
+	content: "";
 	height: 100px;
-	justify-content: center;
-	line-height: var(--ak-globals-theme-font-line-height-body);
-	margin: 0;
+	left: 0;
 	position: absolute;
-	text-align: center;
 	transition: all .4s ease-out;
 	width: 100%;
 	z-index: 1;
 }
 
-.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-title {
+.plura-wp-posts.grid .plura-wp-post:hover::before {
 	background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.8) 100%);
 	height: 100%;
 }
 
 
-/* grid: excerpt — provisional. The legacy grid had no excerpt, so rather than invent a
-   resting-state layout it rides the hover overlay, under the title. */
-.plura-wp-posts.grid .plura-wp-post-excerpt {
+/* grid: text — stacked above the scrim. Legacy put colour and centring on
+   .plura-wp-post-title-link; link="1" leaves no inner anchor, so they land here. */
+.plura-wp-posts.grid :is(.plura-wp-post-title, .plura-wp-post-excerpt) {
 	color: white;
-	font-size: var(--ak-globals-theme-font-size-xsmall);
-	left: 0;
-	line-height: var(--ak-globals-theme-font-line-height-xsmall);
-	opacity: 0;
-	padding: 0 1.5rem;
-	position: absolute;
+	position: relative;
 	text-align: center;
-	top: 60%;
-	transition: opacity .4s ease-out;
-	width: 100%;
 	z-index: 2;
 }
 
+/* The legacy title was a <div> inheriting body size; this is an <h3>, which would
+   otherwise take base.css's h3 rule at more than double that. */
+.plura-wp-posts.grid .plura-wp-post-title {
+	font-family: var(--wp--preset--font-family--heading);
+	font-size: var(--ak-globals-theme-font-size-body);
+	font-weight: var(--ak-globals-theme-font-size-weight-body);
+	line-height: var(--ak-globals-theme-font-line-height-body);
+	margin: 0;
+}
+
+/* Collapsed rather than hidden, so it takes no room in the flow until revealed and the
+   title stays put. max-height is a ceiling, not a measurement: long excerpts clip. */
+.plura-wp-posts.grid .plura-wp-post-excerpt {
+	font-size: var(--ak-globals-theme-font-size-xsmall);
+	line-height: var(--ak-globals-theme-font-line-height-xsmall);
+	margin-block-start: 0;
+	max-height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition: margin .4s ease-out, max-height .4s ease-out, opacity .4s ease-out;
+}
+
 .plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-excerpt {
+	margin-block-start: .5rem;
+	max-height: 60%;
 	opacity: 1;
 }

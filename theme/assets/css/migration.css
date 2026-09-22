@@ -66,7 +66,11 @@
 }
 
 
-/* grid: title overlay */
+/* grid: title overlay.
+   The legacy title was a <div> inheriting body size; here it is an <h3>, which picks up
+   base.css's h3 rule — more than double the size — so size and line-height are restated.
+   Legacy put color and centring on .plura-wp-post-title-link; with link="1" there is no
+   inner anchor, so they live on the title itself and text-decoration on the item. */
 .plura-wp-posts.grid .plura-wp-post-title {
 	align-items: center;
 	background: linear-gradient(0deg, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%);
@@ -74,9 +78,11 @@
 	color: white;
 	display: flex;
 	font-family: var(--wp--preset--font-family--heading);
+	font-size: var(--ak-globals-theme-font-size-body);
 	font-weight: var(--ak-globals-theme-font-size-weight-body);
 	height: 100px;
 	justify-content: center;
+	line-height: var(--ak-globals-theme-font-line-height-body);
 	margin: 0;
 	position: absolute;
 	text-align: center;
@@ -95,7 +101,9 @@
    resting-state layout it rides the hover overlay, under the title. */
 .plura-wp-posts.grid .plura-wp-post-excerpt {
 	color: white;
+	font-size: var(--ak-globals-theme-font-size-small);
 	left: 0;
+	line-height: var(--ak-globals-theme-font-line-height-small);
 	opacity: 0;
 	padding: 0 1.5rem;
 	position: absolute;

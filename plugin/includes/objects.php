@@ -22,100 +22,6 @@ $AK_OBJECTS_RELATED_DEFAULTS = [
 	'limit' => 6
 ];
 
-//Object: Query Vars
-//get objects query variables
-function ak_objects_query_vars(
-	array|int|null $ids = null,
-	array|int|null $exclude = null,
-	array|int|null $category = null,
-	array|int|null $collection = null,
-	array|int|null $material = null,
-	array|int|null $tag = null,
-	int $limit = -1,
-	bool $active = true,
-	int|null $client = null,
-	string $type = 'ak_object',
-	bool $rand = false
-): array {
-
-	global $wp_query;
-
-	$query_vars = [
-		'post_type'      => $type,
-		'posts_per_page' => $limit,
-	];
-
-	$meta = [];
-	$tax  = [];
-
-	// Exclude posts
-	if ($exclude) {
-		$query_vars['post__not_in'] = (array) $exclude;
-	}
-
-	// Specific post IDs
-	if (!empty($ids)) {
-		$query_vars['orderby']   = 'post__in';
-		$query_vars['post__in']  = (array) $ids;
-	} elseif ($rand) {
-		$query_vars['orderby'] = 'rand';
-	}
-
-	// Taxonomies
-	foreach ([
-		'category'   => $category,
-		'collection' => $collection,
-		'material'   => $material,
-		'tag'        => $tag,
-	] as $taxKey => $termIDs) {
-		if (!empty($termIDs)) {
-			$tax[] = [
-				'taxonomy' => 'ak_object_' . $taxKey,
-				'field'    => 'term_id',
-				'terms'    => function_exists('plura_wpml_id') ? plura_wpml_id((array) $termIDs) : (array) $termIDs,
-			];
-		}
-	}
-
-	// Active status
-	if ($active) {
-		$meta[] = [
-			[
-				'key'     => 'ak_object_status',
-				'value'   => '1',
-				'compare' => '==', // Optional, default is '='
-			]
-		];
-	}
-
-	// Filter by client ID or URL-based rewrite rule
-	if (!empty($client) || $wp_query->get('ak_object_collection_client')) {
-		if (!empty($client)) {
-			$clientID = $client;
-		} else {
-			$client = get_page_by_path($wp_query->get('ak_object_collection_client'), OBJECT, 'ak_client');
-			$clientID = $client?->ID;
-		}
-
-		if (!empty($clientID)) {
-			$meta[] = [
-				'field' => 'ak_object_client',
-				'value' => $clientID,
-			];
-		}
-	}
-
-	if (!empty($meta)) {
-		$query_vars['meta_query'] = $meta;
-	}
-
-	if (!empty($tax)) {
-		$query_vars['tax_query'] = $tax;
-	}
-
-	return $query_vars;
-}
-
 
 //Objects: Grid
 
@@ -273,34 +179,6 @@ function ak_object_featured_image_id( $objectID ) {
 	return false;
 
 }
-
-
-//get artist's featured object image id
-function ak_collection_featured_object_image_id( $collectionID ) {
-
-	$query = new WP_Query( ak_objects_query_vars( ['collection' => $collectionID] ) );
-
-	if( $query->have_posts() ) {
-
-		//loop objects
-		foreach( $query->posts as $post ) {
-
-			$imgID = ak_object_featured_image_id( $post->ID );
-
-			if( $imgID ) {
-
-				return $imgID;
-
-			}
-
-		}
-
-	}
-
-	return false;
-
-}
-
 
 
 //Object: Info

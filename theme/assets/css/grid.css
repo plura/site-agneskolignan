@@ -73,35 +73,6 @@
 }
 
 
-/* grid: objects — title fades in on hover */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-type="object"] :is(.plura-wp-post, .plura-wp-term) :is(.plura-wp-post-title, .plura-wp-term-title) :is(.plura-wp-post-title-link, .plura-wp-term-title-link) {
-	opacity: 0;
-	transition: opacity .4s ease-out;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-type="object"] :is(.plura-wp-post, .plura-wp-term):hover :is(.plura-wp-post-title, .plura-wp-term-title) :is(.plura-wp-post-title-link, .plura-wp-term-title-link) {
-	opacity: 1;
-}
-
-
-/* grid: hover animations */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term)::before {
-	filter: blur(0);
-	transition: background-size .4s ease-out;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term):hover::before {
-	filter: blur(4px);
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term)[data-bg-dir="l"]:hover::before {
-	background-size: auto 140%;
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term)[data-bg-dir="p"]:hover::before {
-	background-size: 140% auto;
-}
-
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"]:not(.full) :is(.plura-wp-post, .plura-wp-term):hover::after,
 :is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] :is(.plura-wp-post, .plura-wp-term):hover :is(.plura-wp-post-title, .plura-wp-term-title) {
 	background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.8) 100%);

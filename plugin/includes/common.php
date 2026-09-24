@@ -22,60 +22,6 @@
 const AK_POSTS_CONTEXT = 'ak-posts';
 
 
-//Header Title
-function ak_title_breadcrumbs( bool $title = true, bool $breadcrumbs = true ): ?string {
-
-	$atts = ["class" => 'ak-title-breadcrumbs'];
-
-	$html = [];
-
-	if( $title ) {
-
-		$atts['data-title'] = 1;
-
-		$html[] = plura_wp_title(object: get_the_ID());
-
-	}
-
-	if( $breadcrumbs ) {
-
-		$b = plura_wp_breadcrumbs();
-
-		if( $b ) {
-
-			$atts['data-breadcrumbs'] = 1;
-
-			$html[] = $b;
-
-		}
-
-	}
-
-	if( !empty( $html ) ) {
-
-		return "<div " . plura_attributes( $atts ) . ">" . implode('', $html) . "</div>";
-
-	}
-
-	return null;
-
-}
-
-function ak_title_breadcrumbs_shortcode( $args ) {
-
-	$atts = shortcode_atts([
-		'title' => true,
-		'breadcrumbs' => true
-	], $args);
-
-	return ak_title_breadcrumbs( (bool) $atts['title'], (bool) $atts['breadcrumbs'] );
-
-}
-
-add_shortcode('ak-title-breadcrumbs', 'ak_title_breadcrumbs_shortcode');
-
-
-
 
 /* POSTS */
 

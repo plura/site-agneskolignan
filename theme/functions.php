@@ -67,9 +67,13 @@ add_filter('plura_wp_breadcrumbs', function( ?array $crumbs, $object, ?string $c
     //collection tax
     } else if( is_tax('ak_object_collection') ) {
 
-        if( $wp_query->get('ak_object_collection_client') ) {
+        // The rewrite accepts any second segment, so the slug need not resolve to a client.
+        // plura_wp_breadcrumb() is not nullable, and passing null here was a fatal.
+        $client = $wp_query->get('ak_object_collection_client')
+            ? get_page_by_path( $wp_query->get('ak_object_collection_client'), OBJECT, 'ak_client' )
+            : null;
 
-            $client = get_page_by_path( $wp_query->get('ak_object_collection_client'), OBJECT, 'ak_client' );
+        if( $client ) {
 
             $crumbs[] = [ plura_wp_breadcrumb( AK_PAGE_COLLABORATIONS ), plura_wp_breadcrumb( $client ) ];
 

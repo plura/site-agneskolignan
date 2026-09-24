@@ -18,7 +18,11 @@
  */
 
 
-//Header Title 
+// Scopes the plura_wp_posts_query filter below to queries coming from ak_posts().
+const AK_POSTS_CONTEXT = 'ak-posts';
+
+
+//Header Title
 function ak_title_breadcrumbs( bool $title = true, bool $breadcrumbs = true ): ?string {
 
 	$atts = ["class" => 'ak-title-breadcrumbs'];
@@ -98,38 +102,123 @@ function ak_posts(
 	array|null $data = null
 ) {
 
-	$query_vars = ak_objects_query_vars(
+	$posts = plura_wp_posts(
 		// Query vars
-		type:   $type,
-		limit:  $limit,
-		ids:    $ids,
-		exclude: $exclude,
-		active: $active,
-		rand:   $rand,
+		type:    $type,
+		limit:   $limit,
+		ids:     $ids ?? [],
+		exclude: $exclude ?? [],
 
-		// Query vars: taxonomies
-		collection: $collection,
-		category:   $category,
-		material:   $material,
-		tag:        $tag,
-		client:     $client
+		// ak_objects_query_vars() gave explicit IDs precedence over rand and preserved the
+		// order they were passed in; plura_wp_posts() tests rand first, so suppress it.
+		rand:    $ids ? 0 : ( $rand ? 1 : 0 ),
+		orderby: $ids ? 'post__in' : 'date',
+
+		// Native, so no filter needed: null leaves the clause out entirely, matching the
+		// original's `if ($active)`.
+		active:     $active ? 1 : null,
+		active_key: 'ak_object_status',
+
+		// The taxonomy and client clauses have no native equivalent — see the
+		// plura_wp_posts_query filter below.
+		context: AK_POSTS_CONTEXT,
+		params:  compact('category', 'collection', 'material', 'tag', 'client'),
+
+		output: 'objects'
 	);
 
-	$query = new WP_Query($query_vars);
+	// plura_wp_posts() returns '' rather than an empty array when nothing matches, and
+	// ak_posts_grid() reads the foreach's leaked $post, so both cases need guarding.
+	if( ! is_array( $posts ) || empty( $posts ) ) {
 
-	if( $query->have_posts() ) {
-
-		return ak_posts_grid(
-			posts: $query->posts,
-			class: $class,
-			label: $label,
-			data: $data
-		);
+		return null;
 
 	}
 
-	return null;
+	return ak_posts_grid(
+		posts: $posts,
+		class: $class,
+		label: $label,
+		data: $data
+	);
 }
+
+
+/**
+ * Taxonomy and client clauses for ak_posts(), which plura_wp_posts() cannot express:
+ * it takes a single taxonomy/terms pair, while these filter across four at once.
+ *
+ * Ported as-is from ak_objects_query_vars(), including the client clause's 'field' key,
+ * which meta_query does not recognise. It is left wrong here so that fixing it lands in a
+ * commit of its own and any change in results is attributable to that alone.
+ *
+ * Moves to objects.php when the rendering follows in the next step.
+ *
+ * @param array $query_params WP_Query arguments.
+ * @param array $args         Arguments plura_wp_posts_query() was called with.
+ * @return array
+ */
+add_filter('plura_wp_posts_query', function( array $query_params, array $args ): array {
+
+	if( ( $args['context'] ?? '' ) !== AK_POSTS_CONTEXT ) {
+
+		return $query_params;
+
+	}
+
+	global $wp_query;
+
+	$params = $args['params'] ?? [];
+
+	$tax = [];
+
+	foreach( ['category', 'collection', 'material', 'tag'] as $taxKey ) {
+
+		if( !empty( $params[ $taxKey ] ) ) {
+
+			$tax[] = [
+				'taxonomy' => 'ak_object_' . $taxKey,
+				'field'    => 'term_id',
+				'terms'    => function_exists('plura_wpml_id') ? plura_wpml_id( (array) $params[ $taxKey ] ) : (array) $params[ $taxKey ],
+			];
+
+		}
+
+	}
+
+	if( !empty( $tax ) ) {
+
+		$query_params['tax_query'] = $tax;
+
+	}
+
+	// Filter by client ID or URL-based rewrite rule
+	$client = $params['client'] ?? null;
+
+	if( !empty( $client ) || $wp_query->get('ak_object_collection_client') ) {
+
+		if( empty( $client ) ) {
+
+			$client = get_page_by_path( $wp_query->get('ak_object_collection_client'), OBJECT, 'ak_client' );
+
+			$client = $client?->ID;
+
+		}
+
+		if( !empty( $client ) ) {
+
+			$query_params['meta_query'][] = [
+				'field' => 'ak_object_client',
+				'value' => $client,
+			];
+
+		}
+
+	}
+
+	return $query_params;
+
+}, 10, 2);
 
 
 //get objects grid

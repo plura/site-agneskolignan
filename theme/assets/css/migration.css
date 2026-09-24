@@ -126,3 +126,21 @@
 	max-height: 60%;
 	opacity: 1;
 }
+
+
+/* grid: label — layout.css already renders it with content: attr(data-label). In a
+   wrapping flex row it needs full width to sit on its own line, which the legacy grid
+   did through [data-layout="grid"][data-related]::before. */
+.plura-wp-posts.grid[data-label]::before {
+	width: 100%;
+}
+
+
+/* grid: related — denser than a standard grid */
+.plura-wp-posts.grid[data-related] {
+	--n: 3;
+}
+
+@media all and (min-width: 768px) {
+	.plura-wp-posts.grid[data-related] { --n: 6; }
+}

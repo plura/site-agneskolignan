@@ -102,7 +102,17 @@ function ak_posts(
 	array|null $data = null
 ) {
 
-	$posts = plura_wp_posts(
+	// ak_posts_grid() prefixed these itself; plura_wp_posts() merges $data into the
+	// container attributes exactly as given.
+	$atts_data = [];
+
+	foreach( (array) $data as $key => $value ) {
+
+		$atts_data[ 'data-' . $key ] = $value;
+
+	}
+
+	$html = plura_wp_posts(
 		// Query vars
 		type:    $type,
 		limit:   $limit,
@@ -124,23 +134,17 @@ function ak_posts(
 		context: AK_POSTS_CONTEXT,
 		params:  compact('category', 'collection', 'material', 'tag', 'client'),
 
-		output: 'objects'
-	);
-
-	// plura_wp_posts() returns '' rather than an empty array when nothing matches, and
-	// ak_posts_grid() reads the foreach's leaked $post, so both cases need guarding.
-	if( ! is_array( $posts ) || empty( $posts ) ) {
-
-		return null;
-
-	}
-
-	return ak_posts_grid(
-		posts: $posts,
-		class: $class,
+		// Output. 'grid' is appended rather than replacing $class, so shortcodes already
+		// passing a class keep it. link:1 wraps each tile in a single anchor, which is what
+		// ak_posts_grid_item() achieved with a click handler in scripts.js.
+		class: trim( 'grid ' . (string) $class ),
 		label: $label,
-		data: $data
+		data:  $atts_data,
+		link:  1
 	);
+
+	// plura_wp_posts() returns '' when nothing matches; ak_posts() has always returned null.
+	return $html ?: null;
 }
 
 
@@ -221,8 +225,70 @@ add_filter('plura_wp_posts_query', function( array $query_params, array $args ):
 }, 10, 2);
 
 
+/**
+ * Reduce each tile to image and title, as ak_posts_grid_item() rendered them.
+ *
+ * @param array       $entry   Ordered content parts keyed by section.
+ * @param WP_Post     $post    Post being rendered.
+ * @param string|null $context Context passed down from ak_posts().
+ * @return array
+ */
+add_filter('plura_wp_post', function( array $entry, WP_Post $post, ?string $context = null ): array {
+
+	if( $context !== AK_POSTS_CONTEXT ) {
+
+		return $entry;
+
+	}
+
+	$parts = [];
+
+	foreach( $entry as $key => $value ) {
+
+		if( in_array( $key, ['featured-image', 'title'], true ) ) {
+
+			$parts[ $key ] = $value;
+
+		}
+
+	}
+
+	return $parts;
+
+}, 10, 3);
+
+
+/**
+ * Carry the per-type featured image fallbacks into the migrated rendering.
+ *
+ * ak_post_featured_image_id() dispatches to ak_object_featured_image_id() and
+ * ak_client_featured_image_id() by name, which is site logic with no Plura equivalent.
+ * It retires with the rest of the legacy helpers once objects and clients are done.
+ *
+ * @param string|null $result  Rendered <img>, or null when there is no thumbnail.
+ * @param WP_Post     $post    Post being rendered.
+ * @param string      $size    Image size requested.
+ * @param array       $atts    Attributes already merged by the caller.
+ * @param string|null $context Context passed down from ak_posts().
+ * @return string|null
+ */
+add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $post, string $size, array $atts, ?string $context = null ): ?string {
+
+	if( $result || $context !== AK_POSTS_CONTEXT ) {
+
+		return $result;
+
+	}
+
+	$id = ak_post_featured_image_id( $post->ID );
+
+	return $id ? plura_wp_image( (int) $id, $size, $atts ) : null;
+
+}, 10, 5);
+
+
 //get objects grid
-function ak_posts_grid( 
+function ak_posts_grid(
     array $posts, 
     array|string|null $class = null, 
     ?string $label = null, 

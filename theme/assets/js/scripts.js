@@ -1,46 +1,68 @@
-//Scroll
+// Everything here is one module: an unguarded querySelector that returns null throws at
+// evaluation and takes every later block down with it. Each block checks what it needs.
+
 const
 	header = document.querySelector('header'),
-	headerH = header.querySelector(':scope > .wp-block-group').offsetHeight,
-	scrollEventHandler = () => {
-		if( window.scrollY > headerH ) {
-			header.classList.add('ak-sticky');
-		} else {
-			header.classList.remove('ak-sticky');
-		}
-	};
+	postType = typeof plura_wp_data !== 'undefined' ? plura_wp_data?.type ?? '' : '';
 
-document.addEventListener("scroll", event => scrollEventHandler() );
-scrollEventHandler();
+
+//Scroll
+const headerGroup = header?.querySelector(':scope > .wp-block-group');
+
+if( headerGroup ) {
+
+	const
+		headerH = headerGroup.offsetHeight,
+		scrollEventHandler = () => {
+			if( window.scrollY > headerH ) {
+				header.classList.add('ak-sticky');
+			} else {
+				header.classList.remove('ak-sticky');
+			}
+		};
+
+	document.addEventListener("scroll", event => scrollEventHandler() );
+	scrollEventHandler();
+
+}
 
 
 //menu
 const
-	logo = header.querySelector('.wp-block-site-logo'),
-	nav = header.querySelector('nav'),
-	nav_logo_holder = logo.parentNode,
-	m_observer = new ResizeObserver( entries => {
-		if( window.innerWidth >= 782 ) {
-			nav_logo_holder.append( logo );
-		} else {
-			nav.parentNode.prepend( logo );
-		}
-	});
+	logo = header?.querySelector('.wp-block-site-logo'),
+	nav = header?.querySelector('nav');
 
-nav_logo_holder.classList.add('ak-nav-logo-holder');
-m_observer.observe( document.body );
+if( logo && nav ) {
+
+	const
+		nav_logo_holder = logo.parentNode,
+		m_observer = new ResizeObserver( entries => {
+			if( window.innerWidth >= 782 ) {
+				nav_logo_holder.append( logo );
+			} else {
+				nav.parentNode.prepend( logo );
+			}
+		});
+
+	nav_logo_holder.classList.add('ak-nav-logo-holder');
+	m_observer.observe( document.body );
+
+}
 
 
 //Objects Grid
 //use title link to link entire grid item
 document.querySelectorAll(':is(.plura-wp-posts, .plura-wp-terms) :is(.plura-wp-post, .plura-wp-term).full').forEach( element => {
 	element.addEventListener('click', event => {
-		window.location.href = element.querySelector(':is(.plura-wp-post-title-link, .plura-wp-term-title-link)').href;
+		const link = element.querySelector(':is(.plura-wp-post-title-link, .plura-wp-term-title-link)');
+		if( link ) {
+			window.location.href = link.href;
+		}
 	});
 });
 
 
-if( plura_wp_data.type.match(/ak_(exhibition|object)/) ) {
+if( postType.match(/ak_(exhibition|object)/) ) {
 
 	const
 		gallery = document.querySelector(".ak-gallery"),
@@ -74,13 +96,17 @@ if( plura_wp_data.type.match(/ak_(exhibition|object)/) ) {
 }
 
 
-if( plura_wp_data.type === 'ak_object' ) {
+// plura_wp_data.type is 'ak_object' on the object taxonomy archives too, not only on a
+// single object, and those pages carry no .ak-object-info-holder.
+const objectInfo = document.querySelector('.ak-object-info-holder');
+
+if( postType === 'ak_object' && objectInfo ) {
 
 	let toggle_status;
 
 	const
-		colgroup = document.querySelector('.ak-object-info-holder').parentNode,
-		col = colgroup.querySelector('.ak-object-info-holder'),
+		colgroup = objectInfo.parentNode,
+		col = objectInfo,
 		trigger = document.createElement('div'),
 		refresh = status => {
 			toggle_status = status;

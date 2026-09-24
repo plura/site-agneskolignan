@@ -130,7 +130,30 @@ add_filter('body_class', function( $classes ) {
 
 	return array_merge($classes, $c);
 
-} ); 
+} );
+
+
+/**
+ * TEMPORARY diagnostic: reports whether the two-segment collections rule is registered
+ * in code and whether it reached the stored rules, which a 404 alone cannot distinguish.
+ * Remove once the rewrite is resolved.
+ */
+add_action('wp_head', function() {
+
+	global $wp_rewrite;
+
+	$rule = '^collections/([^/]+)/([^/]+)/?$';
+
+	$stored = get_option('rewrite_rules');
+
+	echo "\n<!-- ak-rewrite:"
+		. ' stored=' . ( is_array( $stored ) ? count( $stored ) : 'none' )
+		. ' ours-stored=' . ( is_array( $stored ) && isset( $stored[ $rule ] ) ? 'yes' : 'NO' )
+		. ' ours-registered=' . ( isset( $wp_rewrite->extra_rules_top[ $rule ] ) ? 'yes' : 'NO' )
+		. ' permalink=' . ( get_option('permalink_structure') ?: 'PLAIN' )
+		. " -->\n";
+
+}, 1);
 
 
 /**

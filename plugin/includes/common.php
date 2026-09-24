@@ -148,9 +148,9 @@ function ak_posts(
  * Taxonomy and client clauses for ak_posts(), which plura_wp_posts() cannot express:
  * it takes a single taxonomy/terms pair, while these filter across four at once.
  *
- * Ported as-is from ak_objects_query_vars(), including the client clause's 'field' key,
- * which meta_query does not recognise. It is left wrong here so that fixing it lands in a
- * commit of its own and any change in results is attributable to that alone.
+ * Ported from ak_objects_query_vars(). The client clause originally said 'field', which
+ * belongs to tax_query — meta_query saw a clause with a value and no key and matched on
+ * meta_value alone, ignoring which field it came from.
  *
  * Moves to objects.php when the rendering follows in the next step.
  *
@@ -208,7 +208,7 @@ add_filter('plura_wp_posts_query', function( array $query_params, array $args ):
 		if( !empty( $client ) ) {
 
 			$query_params['meta_query'][] = [
-				'field' => 'ak_object_client',
+				'key'   => 'ak_object_client',
 				'value' => $client,
 			];
 

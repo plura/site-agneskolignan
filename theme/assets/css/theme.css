@@ -244,7 +244,6 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 
 /* font family applications — must come last to override weight/size set above */
 header nav .wp-block-navigation-item .wp-block-navigation-item__content,
-.ak-title-breadcrumbs .p-title,
 :is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,
 .single-ak_object .ak-object-core .ak-object-info-toggle-trigger::after {
 	font-family: var(--ak-globals-theme-font-heading);
@@ -257,14 +256,4 @@ header nav .wp-block-navigation-item .wp-block-navigation-item__content,
 	font-size: var(--ak-globals-theme-font-size-small);
 	letter-spacing: 2px;
 	text-transform: none;
-}
-
-.ak-title-breadcrumbs .p-title {
-	font-size: var(--ak-globals-theme-font-size-h1);
-	line-height: var(--ak-globals-theme-font-line-height-h1);
-}
-
-.ak-object-info-holder .ak-title-breadcrumbs .p-title {
-	font-size: var(--ak-globals-theme-font-size-h2);
-	line-height: var(--ak-globals-theme-font-line-height-h2);
 }

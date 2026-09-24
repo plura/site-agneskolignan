@@ -260,9 +260,32 @@ add_filter( 'query_vars', function( array $query_vars ): array {
 } );
 
 
-/* add_action( 'init', function () {
+/**
+ * Flush the rewrite rules once, whenever the rules above change.
+ *
+ * The rules are registered on every request but only take effect once written to the
+ * rewrite_rules option, and nothing here was writing them — so the two-segment collection
+ * URL 404'd and WordPress guessed its way to the client page instead. An activation hook
+ * would not help either, since this site deploys over SFTP and never reactivates.
+ *
+ * Bump AK_REWRITE_VERSION whenever a rule above is added or changed; the flush is skipped
+ * on every request after that, so the cost is paid once per deploy that needs it.
+ */
+const AK_REWRITE_VERSION = '1';
+
+add_action( 'init', function () {
+
+	if( get_option('ak_rewrite_version') === AK_REWRITE_VERSION ) {
+
+		return;
+
+	}
+
 	flush_rewrite_rules();
-}, 99 ); */
+
+	update_option('ak_rewrite_version', AK_REWRITE_VERSION);
+
+}, 99 );
 
 
 /* Rewrite */

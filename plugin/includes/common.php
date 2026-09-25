@@ -347,18 +347,15 @@ function ak_taxonomy(
 		context: AK_TERMS_CONTEXT,
 		params:  ['ignore_term_order' => (bool) $order, 'child_of' => $parent, 'meta' => $meta],
 
-		output: 'objects'
+		// link: true wraps each tile in a single anchor, as link: 1 does for posts, which
+		// is what ak_taxonomy_grid_item() achieved with the click handler in scripts.js.
+		class: 'grid',
+		label: $label,
+		link:  true
 	);
 
-	// Unlike plura_wp_posts(), the terms function returns before its empty check, so
-	// output:'objects' always yields an array. ak_taxonomy_grid() still reads $terms[0].
-	if( empty( $terms ) ) {
-
-		return null;
-
-	}
-
-	return ak_taxonomy_grid( $terms, $label );
+	// plura_wp_terms() returns '' when nothing matches; ak_taxonomy() returned null.
+	return $terms ?: null;
 }
 
 

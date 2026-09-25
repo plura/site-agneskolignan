@@ -6,7 +6,7 @@
  * and keep using grid.css. Once every post type has moved across, grid.css and the
  * ak_*_grid_item() builders go away and this becomes the grid stylesheet.
  *
- * Per-type tweaks layer on with .plura-wp-posts.grid[data-type="…"].
+ * Per-type tweaks layer on with :is(.plura-wp-posts, .plura-wp-terms).grid[data-type="…"].
  *
  * Expects [plura-wp-posts type="…" context="…" link="1" class="grid"].
  */
@@ -14,7 +14,7 @@
 
 /* grid: container — layout.css sets display:grid on every .plura-wp-posts, so the
    flex layout has to be restated rather than inherited. */
-.plura-wp-posts.grid {
+:is(.plura-wp-posts, .plura-wp-terms).grid {
 	--n: 2;
 
 	display: flex;
@@ -24,22 +24,22 @@
 }
 
 @media all and (min-width: 768px) {
-	.plura-wp-posts.grid { --n: 3; }
+	:is(.plura-wp-posts, .plura-wp-terms).grid { --n: 3; }
 }
 
 @media all and (min-width: 991px) {
-	.plura-wp-posts.grid { --n: 4; }
+	:is(.plura-wp-posts, .plura-wp-terms).grid { --n: 4; }
 }
 
 @media all and (min-width: 1200px) {
-	.plura-wp-posts.grid { --n: 5; }
+	:is(.plura-wp-posts, .plura-wp-terms).grid { --n: 5; }
 }
 
 
 /* grid: item — an <a> under link="1", so the whole tile is the link and no cursor or
    click handler is needed. A flex column keeps the title and excerpt in normal flow,
    which is what the padding acts on; the image and scrim sit behind, out of flow. */
-.plura-wp-posts.grid .plura-wp-post {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post, .plura-wp-term) {
 	aspect-ratio: 1 / 1;
 	display: flex;
 	flex-direction: column;
@@ -55,7 +55,7 @@
 /* grid: image — a real <img> rather than a CSS background, so the zoom and blur the
    legacy grid declared on ::before (and never rendered, lacking a content property)
    actually work here. */
-.plura-wp-posts.grid .plura-wp-post-featured-image {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post-featured-image, .plura-wp-term-featured-image) {
 	height: 100%;
 	inset: 0;
 	object-fit: cover;
@@ -64,7 +64,7 @@
 	width: 100%;
 }
 
-.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-featured-image {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post, .plura-wp-term):hover :is(.plura-wp-post-featured-image, .plura-wp-term-featured-image) {
 	filter: blur(4px);
 	transform: scale(1.15);
 }
@@ -72,7 +72,7 @@
 
 /* grid: scrim — the gradient the legacy grid hung off the title element. Detaching it
    onto a pseudo element leaves the tile's padding governing the text alone. */
-.plura-wp-posts.grid .plura-wp-post::before {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post, .plura-wp-term)::before {
 	background: linear-gradient(0deg, rgba(0,0,0,.5) 50%, rgba(0,0,0,0) 100%);
 	bottom: 0;
 	content: "";
@@ -84,7 +84,7 @@
 	z-index: 1;
 }
 
-.plura-wp-posts.grid .plura-wp-post:hover::before {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post, .plura-wp-term):hover::before {
 	background: linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.8) 100%);
 	height: 100%;
 }
@@ -92,7 +92,7 @@
 
 /* grid: text — stacked above the scrim. Legacy put colour and centring on
    .plura-wp-post-title-link; link="1" leaves no inner anchor, so they land here. */
-.plura-wp-posts.grid :is(.plura-wp-post-title, .plura-wp-post-excerpt) {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post-title, .plura-wp-term-title, .plura-wp-post-excerpt) {
 	color: white;
 	position: relative;
 	text-align: center;
@@ -101,7 +101,7 @@
 
 /* The legacy title was a <div> inheriting body size; this is an <h3>, which would
    otherwise take base.css's h3 rule at more than double that. */
-.plura-wp-posts.grid .plura-wp-post-title {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post-title, .plura-wp-term-title) {
 	font-family: var(--wp--preset--font-family--heading);
 	font-size: var(--ak-globals-theme-font-size-body);
 	font-weight: var(--ak-globals-theme-font-size-weight-body);
@@ -111,7 +111,7 @@
 
 /* Collapsed rather than hidden, so it takes no room in the flow until revealed and the
    title stays put. max-height is a ceiling, not a measurement: long excerpts clip. */
-.plura-wp-posts.grid .plura-wp-post-excerpt {
+:is(.plura-wp-posts, .plura-wp-terms).grid .plura-wp-post-excerpt {
 	font-size: var(--ak-globals-theme-font-size-xsmall);
 	line-height: var(--ak-globals-theme-font-line-height-xsmall);
 	margin-block-start: 0;
@@ -121,7 +121,7 @@
 	transition: margin .4s ease-out, max-height .4s ease-out, opacity .4s ease-out;
 }
 
-.plura-wp-posts.grid .plura-wp-post:hover .plura-wp-post-excerpt {
+:is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post, .plura-wp-term):hover .plura-wp-post-excerpt {
 	margin-block-start: .5rem;
 	max-height: 60%;
 	opacity: 1;
@@ -131,16 +131,16 @@
 /* grid: label — layout.css already renders it with content: attr(data-label). In a
    wrapping flex row it needs full width to sit on its own line, which the legacy grid
    did through [data-layout="grid"][data-related]::before. */
-.plura-wp-posts.grid[data-label]::before {
+:is(.plura-wp-posts, .plura-wp-terms).grid[data-label]::before {
 	width: 100%;
 }
 
 
 /* grid: related — denser than a standard grid */
-.plura-wp-posts.grid[data-related] {
+:is(.plura-wp-posts, .plura-wp-terms).grid[data-related] {
 	--n: 3;
 }
 
 @media all and (min-width: 768px) {
-	.plura-wp-posts.grid[data-related] { --n: 6; }
+	:is(.plura-wp-posts, .plura-wp-terms).grid[data-related] { --n: 6; }
 }

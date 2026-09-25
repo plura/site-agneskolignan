@@ -121,74 +121,76 @@ add_shortcode('ak-collections', 'ak_collections_shortcode');
 
 
 //Collections: Grid Item URL Hook
-add_filter('ak_taxonomy_term_url', function(string $url, WP_Term $term): string {
+add_filter('plura_wp_link_atts', function( array $link_atts, $target, ?string $context = null ): array {
 
 	global $post;
 
 	//if number of clients of one collection is more than one, an extra parameter should be added
 	//to the url in order to filter the collections' objects pertaining only to the client
-	if( is_singular('ak_client') && ak_collection_multi_client( $term ) ) {
+	if( $target instanceof WP_Term && is_singular('ak_client') && ak_collection_multi_client( $target ) ) {
 
-		$url .= $post->post_name . "/";
-
-	}
-
-	return $url;
-
-}, 10, 2);
-
-
-//Collections: Grid Item Featured Image Hook
-add_filter('ak_term_featured_image', function( WP_Term $term, $term_featured_image, array $term_posts_vars ) {
-
-	global $wp_query;
-
-	if( is_singular('ak_client') && $term->taxonomy === 'ak_object_collection' && ak_collection_multi_client( $term ) /*&& $term->slug === 'autumn-winter-2016'*/ ) {
-
-
-		//get all objects from that collection pertaining to a specific client
-		$posts_vars = array_merge( $term_posts_vars, ['posts_per_page' => -1, 'meta_query' => [
-			
-			[
-				'key' => 'ak_object_client',
-				'value' => get_the_ID()
-			]
-
-		] ] );
-
-		$posts = get_posts( $posts_vars );
-
-		$images = [];
-
-		//check if any post's featured image ID equals 'term featured image'
-		foreach( $posts as $post ) {
-
-			$imgID = ak_post_featured_image_id( $post->ID );
-
-			
-			if( $imgID === $term_featured_image['ID'] ) {
-
-				return $term_featured_image;
-
-			} else {
-
-				$images[] = $imgID;
-
-			}
-
-		}
-
-		if( !empty( $images ) ) {
-
-			return $images[0];
-
-		}
+		$link_atts['href'] .= $post->post_name . "/";
 
 	}
 
-	return $term_featured_image;
+	return $link_atts;
 
 }, 10, 3);
+
+
+/**
+ * Collections: Grid Item Featured Image Hook
+ *
+ * On a client's page a shared collection should show that client's work, not whichever
+ * post plura_wp_term_featured_image() picked as the fallback.
+ *
+ * The original walked every one of the client's objects to see whether any used the term's
+ * own image, keeping it when one did and taking the first otherwise. Either branch ends up
+ * with an image from the client's objects, so it just takes the first now.
+ *
+ * @param string|null  $result  Rendered <img>, or null when neither term nor fallback had one.
+ * @param WP_Term      $term    Term being rendered.
+ * @param string       $size    Image size requested.
+ * @param array        $atts    Attributes already merged by the caller.
+ * @param string|null  $context Context passed down from ak_taxonomy().
+ * @param WP_Post|null $post    The post the fallback image came from, if any.
+ * @return string|null
+ */
+add_filter('plura_wp_term_featured_image', function( ?string $result, WP_Term $term, string $size, array $atts, ?string $context = null, $post = null ): ?string {
+
+	if( ! is_singular('ak_client') || $term->taxonomy !== 'ak_object_collection' || ! ak_collection_multi_client( $term ) ) {
+
+		return $result;
+
+	}
+
+	//get the first object from that collection pertaining to the client being viewed
+	$objects = get_posts([
+		'post_type'      => 'ak_object',
+		'posts_per_page' => 1,
+		'fields'         => 'ids',
+		'tax_query'      => [[
+			'taxonomy' => $term->taxonomy,
+			'field'    => 'term_id',
+			'terms'    => $term->term_id
+		]],
+		'meta_query'     => [[
+			'key'   => 'ak_object_client',
+			'value' => get_the_ID()
+		]]
+	]);
+
+	if( ! $objects ) {
+
+		return $result;
+
+	}
+
+	$id = ak_post_featured_image_id( $objects[0] );
+
+	return $id ? plura_wp_image( (int) $id, $size, $atts ) : $result;
+
+}, 10, 6);
 
 
 

@@ -301,23 +301,23 @@ add_shortcode('ak-object-info', 'ak_object_info_shortcode');
 
 
 //Collections: Grid Item URL Hook
-add_filter('ak_taxonomy_term_url', function(string $url, WP_Term $term): string {
+add_filter('plura_wp_link_atts', function( array $link_atts, $target, ?string $context = null ): array {
 
 	//if number of clients of one collection is more than one, an extra parameter should be added
 	//to the url in order to filter the collections' objects pertaining only to the client
-	if( is_singular('ak_object') && $term->taxonomy === 'ak_object_collection' && ak_collection_multi_client( $term ) ) {
+	if( $target instanceof WP_Term && is_singular('ak_object') && $target->taxonomy === 'ak_object_collection' && ak_collection_multi_client( $target ) ) {
 
 		$client = get_field('ak_object_client');
 
 		if( $client ) {
 
-			$url .= $client->post_name . "/";
+			$link_atts['href'] .= $client->post_name . "/";
 
 		}
 
 	}
 
-	return $url;
+	return $link_atts;
 
-}, 10, 2);
+}, 10, 3);
 

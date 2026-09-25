@@ -1,9 +1,8 @@
 <?php
 
-define('AK_EG', 1);
-
-define('AK_RS', 1);
-
+// The ak_client post standing for Agnes herself, so her own work is not labelled as a
+// commission. Read by ak_client_ignore(); the Collaborations and My World pages pass the
+// same id as a shortcode attribute.
 define('AK_CLIENT_IGNORE', 39);
 
 

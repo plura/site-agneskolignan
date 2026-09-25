@@ -3,8 +3,7 @@
 /**
  * Exhibitions grid.
  *
- * Migration step: the grid renders plura_wp_posts()' own markup rather than reproducing
- * the legacy ak_posts_grid_item() output, so styling is the only thing left to port.
+ * Renders plura_wp_posts()' own markup, styled by grid.css under .plura-wp-posts.grid.
  * Target the container with [data-context="exhibitions"], which plura_wp_posts() emits.
  *
  * [plura-wp-posts type="ak_exhibition" context="exhibitions"]
@@ -70,8 +69,9 @@ add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $p
 
 	}
 
-	// Kept self-contained rather than routed through ak_post_featured_image_id(), which
-	// is legacy and goes when the migration finishes.
+	// Not routed through ak_post_featured_image_id(): that dispatches by post type to an
+	// ak_<type>_featured_image_id() function, and there is no reason to add one for a
+	// single caller.
 	$gallery = get_field( AK_EXHIBITIONS_GALLERY, $post->ID );
 
 	if( ! $gallery ) {

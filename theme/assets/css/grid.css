@@ -1,12 +1,10 @@
 /**
- * Migration: modern plura_wp_posts() markup styled to match the legacy grid.
+ * The post and term grid.
  *
- * Opt-in via class="grid" on the shortcode, so only containers already migrated pick
- * these rules up — the object and term grids keep rendering through ak_posts_grid_item()
- * and keep using grid.css. Once every post type has moved across, grid.css and the
- * ak_*_grid_item() builders go away and this becomes the grid stylesheet.
- *
- * Per-type tweaks layer on with :is(.plura-wp-posts, .plura-wp-terms).grid[data-type="…"].
+ * Opt in with class="grid" on the shortcode: that is what scopes these rules to the
+ * plura_wp_posts() and plura_wp_terms() containers meant to render as tiles, rather than
+ * to every one. Per-type tweaks layer on with
+ * :is(.plura-wp-posts, .plura-wp-terms).grid[data-type="…"].
  *
  * Expects [plura-wp-posts type="…" context="…" link="1" class="grid"].
  */

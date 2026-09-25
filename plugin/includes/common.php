@@ -64,8 +64,8 @@ function ak_posts(
 		params:  compact('category', 'collection', 'material', 'tag', 'client'),
 
 		// Output. 'grid' is appended rather than replacing $class, so shortcodes already
-		// passing a class keep it. link:1 wraps each tile in a single anchor, which is what
-		// ak_posts_grid_item() achieved with a click handler in scripts.js.
+		// passing a class keep it. link:1 wraps each tile in a single anchor, so the tile
+		// needs no click handler.
 		class: trim( 'grid ' . (string) $class ),
 		label: $label,
 		data:  $atts_data,
@@ -155,7 +155,7 @@ add_filter('plura_wp_posts_query', function( array $query_params, array $args ):
 
 
 /**
- * Reduce each tile to image and title, as ak_posts_grid_item() rendered them.
+ * Reduce each tile to image and title, dropping every other part plura_wp_post() emits.
  *
  * @param array       $entry   Ordered content parts keyed by section.
  * @param WP_Post     $post    Post being rendered.
@@ -188,11 +188,11 @@ add_filter('plura_wp_post', function( array $entry, WP_Post $post, ?string $cont
 
 
 /**
- * Carry the per-type featured image fallbacks into the migrated rendering.
+ * Fall back to the per-type featured image when a post has no thumbnail.
  *
  * ak_post_featured_image_id() dispatches to ak_object_featured_image_id() and
- * ak_client_featured_image_id() by name, which is site logic with no Plura equivalent.
- * It retires with the rest of the legacy helpers once objects and clients are done.
+ * ak_client_featured_image_id() by name — site logic with no Plura equivalent, so it
+ * stays.
  *
  * @param string|null $result  Rendered <img>, or null when there is no thumbnail.
  * @param WP_Post     $post    Post being rendered.
@@ -243,10 +243,9 @@ function ak_post_featured_image_id( int $postID ): string|bool {
  * Post: Gallery
  *
  * plura_wp_gallery() already emits data-thumb-src on each item, which is what Thumbs
- * reads, and Carousel is pointed at .plura-wp-gallery-item through its classes option in
- * scripts.js rather than needing f-carousel__slide in the markup.
+ * reads.
  *
- * The legacy container id and data-gallery-type are dropped — nothing in the CSS or JS
+ * The old container id and data-gallery-type are dropped — nothing in the CSS or JS
  * referenced them — and with them the 'type' attribute, which only fed the latter.
  */
 add_shortcode('ak-gallery', function( $args ) {
@@ -319,8 +318,8 @@ function ak_taxonomy(
 		context: AK_TERMS_CONTEXT,
 		params:  ['ignore_term_order' => (bool) $order, 'child_of' => $parent, 'meta' => $meta],
 
-		// link: 1 wraps each tile in a single anchor, matching ak_posts(), which is what
-		// ak_taxonomy_grid_item() achieved with the click handler in scripts.js.
+		// link: 1 wraps each tile in a single anchor, matching ak_posts(), so the tile
+		// needs no click handler.
 		class: 'grid',
 		label: $label,
 		link:  1

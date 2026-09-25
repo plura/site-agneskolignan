@@ -93,7 +93,7 @@ header > .wp-block-group > .wp-block-group {
 
 
 /* gallery */
-.f-carousel .plura-wp-gallery-item img {
+.f-carousel .f-carousel__slide img {
 	display: block;
 	height: auto;
 	max-height: 600px;
@@ -106,7 +106,7 @@ header > .wp-block-group > .wp-block-group {
 	transition: height .2s ease;
 }
 
-.f-carousel .plura-wp-gallery-item[style] {
+.f-carousel .f-carousel__slide[style] {
 	padding: 0 .4px;
 	height: var(--h);
 }

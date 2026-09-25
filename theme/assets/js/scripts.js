@@ -78,13 +78,16 @@ if( postType.match(/ak_(exhibition|object)/) ) {
 
 	if( gallery ) {
 
-		// Carousel reads its slide class from the classes option rather than requiring
-		// f-carousel__slide in the markup, so it adopts plura_wp_gallery()'s items as-is.
-		// initLayout() still builds the viewport itself.
+		// Carousel's own stylesheet lays slides out via .f-carousel__slide — flex and
+		// width — so overriding classes.slide is not enough: it changes what Carousel
+		// queries but leaves the items unstyled, and they all render at once. Tag the
+		// items instead and let the library keep its defaults.
+		gallery.querySelectorAll('.plura-wp-gallery-item')
+			.forEach( item => item.classList.add('f-carousel__slide') );
+
 		new Carousel( gallery, {
 			adaptiveHeight: true,
-			Dots: false,
-			classes: { slide: 'plura-wp-gallery-item' }
+			Dots: false
 		}, { Thumbs });
 
 		// Bound to the images rather than a data-fancybox attribute: Fancybox resolves

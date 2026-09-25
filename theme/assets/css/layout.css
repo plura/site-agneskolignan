@@ -124,14 +124,6 @@ header > .wp-block-group > .wp-block-group {
 	height: var(--h);
 }
 
-
-/* object: single */
-.single-ak_object .ak-object-image {
-	height: auto;
-	width: 100%;
-}
-
-
 /* object: info slide */
 @media (min-width: 768px) {
 
@@ -228,40 +220,4 @@ header > .wp-block-group > .wp-block-group {
 /* group */
 :is(.plura-wp-posts, .plura-wp-terms) {
 	display: grid;
-}
-
-
-/* exhibition: datetime */
-.ak-datetime {
-	--space: 5px;
-	display: grid;
-	gap: calc( var(--ak-globals-theme-gap) / 2 );
-}
-
-.ak-datetime .ak-datetime-item.start-end,
-.ak-datetime .ak-datetime-item.opening {
-	display: flex;
-	justify-content: flex-start;
-	flex-wrap: wrap;
-}
-
-.ak-datetime .ak-datetime-item.start-end .start::after,
-.ak-datetime .ak-datetime-item.opening .start::after {
-	content: '-';
-	margin: 0 var(--space);
-}
-
-.ak-datetime .ak-datetime-item.opening::before {
-	content: attr(data-label);
-	display: block;
-	width: 100%;
-}
-
-.ak-datetime .ak-datetime-item.opening .date {
-	margin-right: var(--space);
-}
-
-.ak-datetime .ak-datetime-item.opening.has-time .date::after {
-	content: '|';
-	margin-left: var(--space);
 }

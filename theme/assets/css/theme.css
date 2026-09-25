@@ -129,25 +129,9 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 	text-transform: uppercase;
 }
 
-/* exhibition: datetime */
-.single-ak_exhibition .ak-datetime {
-	font-size: var(--ak-globals-theme-font-size-xsmall);
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
-	text-transform: uppercase;
-}
-
-.ak-datetime .ak-datetime-item.opening::before {
-	font-weight: var(--ak-globals-theme-font-size-weight-body);
-}
-
-
 /* object: single */
 .single-ak_object .ak-title-breadcrumbs {
 	align-items: start;
-}
-
-.single-ak_object .ak-object-image {
-	border: 1px solid color-mix(in srgb, var(--ak-globals-theme-color-orange) 20%, transparent);
 }
 
 

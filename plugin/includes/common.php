@@ -8,8 +8,6 @@ const AK_POSTS_CONTEXT = 'ak-posts';
 const AK_TERMS_CONTEXT = 'ak-terms';
 
 
-
-
 //Posts: Grid
 function ak_posts(
 	// Query vars
@@ -217,32 +215,6 @@ add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $p
 
 }, 10, 5);
 
-
-function ak_post_featured_image( int $postID, string $size = 'medium' ): array|bool {
-
-	$id = ak_post_featured_image_id( $postID );
-
-	if( $id ) {
-
-		foreach( ['large', 'full', 'medium', 'thumbnail'] as $imgsize ) {
-
-			$img = wp_get_attachment_image_src($id, $imgsize);
-
-			if( $img ) {
-
-				return $img;
-
-			}
-
-		}
-
-	}
-
-	return false;
-
-}
-
-
 //Post: Featured Image ID
 function ak_post_featured_image_id( int $postID ): string|bool {
 
@@ -265,7 +237,6 @@ function ak_post_featured_image_id( int $postID ): string|bool {
 	return false;
 
 }
-
 
 
 /**
@@ -311,9 +282,6 @@ add_shortcode('ak-gallery', function( $args ) {
 	) ?: null;
 
 });
-
-
-
 
 
 //Taxonomy
@@ -405,105 +373,6 @@ add_filter('plura_wp_terms_query', function( array $query_params, array $args ):
 }, 10, 2);
 
 
-//Taxonomy: Grid
-function ak_taxonomy_grid( $terms, bool $label = false ): string {
-
-	$items = [];
-
-	foreach( $terms as $term ) {
-
-		$items[] = ak_taxonomy_grid_item( $term );
-
-	}
-
-	$atts = [
-		'class' => 'plura-wp-terms',
-		'data-type' => 'taxonomy',
-		'data-layout' => 'grid',
-		'data-taxonomy' => preg_replace('/ak_([a-z]+)_([a-z])/', '$1-$2', $terms[0]->taxonomy),
-		'data-n' => count( $terms )
-	];
-
-	if( $label ) {
-
-		$atts['data-label'] = $label;
-
-	}
-
-	return "<div " . plura_attributes( $atts ) . ">" . implode('', $items) . "</div>";
-
-}
-
-
-//Taxonomy: Grid Item
-function ak_taxonomy_grid_item( $term, bool $full = true ): string {
-
-	$atts = ['class' => ['plura-wp-term']];
-
-	$atts_link = ['href' => ak_taxonomy_term_url( $term ), 'title' => $term->name];
-
-	$img = ak_term_featured_image( $term );
-
-	if( $img ) {
-
-		$atts = array_merge_recursive( $atts, [
-
-			'class' => ['has-img'],
-
-			'data-bg-dir' => $img[1] >= $img[2] ? 'l' : 'p',
-
-			'style' => '--ak-bg-img: url(\'' . $img[0] . '\');',
-			//'style' => "background-image: url('" . $img[0] . "');",
-
-		]);
-
-		/* $atts['style'] = "background-image: url('" . $img[0] . "');"; */
-
-	}
-
-	$title = "";
-
-	if( $full ) {
-
-		$tag = "div";
-
-		$atts['class'][] = 'full';
-
-		$atts_link['class'] = ['plura-wp-term-title-link'];
-
-		$atts_title = ['class' => 'plura-wp-term-title'];
-
-		$title = "<div " . plura_attributes( $atts_title ) . "><a " . plura_attributes( $atts_link ) . ">" . $term->name . "</a></div>";
-
-	} else {
-
-		$tag = "a";
-
-		$atts = array_merge( $atts, $atts_link);
-
-	}
-
-	return "<$tag " . plura_attributes( $atts ) . ">" . $title . "</$tag>";
-
-}
-
-
-//Taxonomy: Grid Item URL
-function ak_taxonomy_term_url( WP_Term $term ): string {
-
-	$url = get_term_link( $term );
-
-	if( has_filter('ak_taxonomy_term_url') ) {
-
-		$url = apply_filters('ak_taxonomy_term_url', $url, $term);
-
-	}
-
-	return $url;
-
-}
-
-
 function ak_taxonomy_shortcode( $args ) {
 	// Unified defaults
 	$defaults = [
@@ -572,107 +441,6 @@ add_action('init', 'ak_register_shortcodes');
 
 function ak_register_shortcodes() {
 	add_shortcode('ak-taxonomy', 'ak_taxonomy_shortcode');
-}
-
-
-
-
-
-
-
-//Taxonomy: Vars
-function ak_taxonomy_vars(
-    // Query parameters [required]
-    string $tax,
-    
-    // Query parameters
-    string $order = '',
-    array|int|null $exclude = null,
-    array|int|null $include = null,
-    int $limit = -1,
-    ?int $parent = null,
-    array|null $meta = null
-): array {
-    $params = ['taxonomy' => $tax];
-
-    if ($order) {
-        $params['orderby'] = $order;
-        $params['ignore_term_order'] = 1;
-    }
-
-    if ($exclude) {
-        $params['exclude'] = $exclude;
-    }
-
-    if ($include) {
-        $params['include'] = $include;
-    }
-
-    if ($limit > 0) {  // Only apply if positive number
-        $params['number'] = $limit;
-    }
-
-    if ($parent) {
-        $params['child_of'] = $parent;
-    }
-
-    if ($meta) {
-        $params['meta_query'] = $meta;
-    }
-
-    return $params;
-}
-
-
-//Term: Featured Image
-function ak_term_featured_image( $term, string $type = 'ak_object', string $size = 'large' ) {
-
-	if( is_int( $term ) ) {
-
-		$term = get_term( $term );
-
-	}	
-
-	$posts_vars = [
-		'post_type' => $type,
-		'posts_per_page' => 1,
-		'tax_query' => [
-			[
-				'field' => 'term_id',
-				'taxonomy' => $term->taxonomy,
-				'terms' => $term->term_id
-			]
-		]
-	];
-
-	$img = get_field('featured_image', $term);
-
-	if( has_filter('ak_term_featured_image') ) {
-
-		$img = apply_filters('ak_term_featured_image', $term, $img, $posts_vars);
-
-	}
-
-	if( $img ) {
-
-		$attachment_id = is_array($img) && isset($img['ID']) ? (int) $img['ID'] : (int) $img;
-
-		return wp_get_attachment_image_src($attachment_id, $size);
-
-	} else {
-
-		$posts = get_posts( $posts_vars );
-
-		if( $posts ) {
-
-			return ak_post_featured_image( $posts[0]->ID, $size );
-
-		}			
-
-	}
-
-	return false;
-
 }
 
 

@@ -1,3 +1,12 @@
+/**
+ * Design tokens and the element defaults that read them.
+ *
+ * The type scale is a fixed px ladder multiplied by --ak-globals-theme-increment, which
+ * steps up at two breakpoints below, so every size moves together.
+ */
+
+
+/* tokens */
 :root {
 
 	/* typography */
@@ -22,29 +31,24 @@
 	--ak-globals-theme-font-line-height-h4: calc( var(--ak-globals-theme-font-size-h4) * var(--ak-globals-theme-line-height-increment-header) );
 
 	--ak-globals-theme-font-line-height-body: calc( var(--ak-globals-theme-font-size-body) * var(--ak-globals-theme-line-height-increment-body) );
-	--ak-globals-theme-font-line-height-small: calc( var(--ak-globals-theme-font-size-small) * var(--ak-globals-theme-line-height-increment-body) );
 	--ak-globals-theme-font-line-height-xsmall: calc( var(--ak-globals-theme-font-size-xsmall) * var(--ak-globals-theme-line-height-increment-body) );
 
 	--ak-globals-theme-font-size-weight-body: 400;
-	--ak-globals-theme-font-size-weight-semibold: 500;
-	--ak-globals-theme-font-size-weight-bold: 600;
 	--ak-globals-theme-font-size-weight-xtra-bold: 700;
 
 	/* colors */
 	--ak-globals-theme-color-orange: #f47820;
-	--ak-globals-theme-color-orange-rgb: 243, 118, 32;
-	--ak-globals-theme-color-grey-dark: #666;
 
 	/* spacing */
 	--ak-globals-theme-gap: 20px;
-	--ak-globals-theme-gap-small: calc( var(--ak-globals-theme-gap) / 2 );
-	--ak-banner-h: 400px;
 
 	/* grid */
 	--ak-globals-grid-gap: 1px;
 
 }
 
+
+/* tokens: scale steps */
 @media (min-width: 768px) {
 	:root {
 		--ak-globals-theme-increment: .9;
@@ -58,6 +62,7 @@
 }
 
 
+/* elements */
 h1 {
 	font-size: var(--ak-globals-theme-font-size-h1);
 	line-height: var(--ak-globals-theme-font-line-height-h1);

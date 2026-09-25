@@ -120,15 +120,6 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 	text-transform: uppercase;
 }
 
-/* group: essential grid label */
-.ak-eg-holder[data-label]::before {
-	font-size: var(--ak-globals-theme-font-size-small);
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
-	margin-bottom: var(--ak-globals-theme-gap-small);
-	text-transform: uppercase;
-}
-
-
 /* exhibition: datetime */
 .single-ak_exhibition .ak-datetime {
 	font-size: var(--ak-globals-theme-font-size-xsmall);
@@ -147,11 +138,7 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 }
 
 .single-ak_object .ak-object-image {
-	border: 1px solid rgba( var(--ak-globals-theme-color-orange-rgb), .2);
-}
-
-.single-ak_object .ak-eg-holder .plura-wp-post-meta-item.title {
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
+	border: 1px solid color-mix(in srgb, var(--ak-globals-theme-color-orange) 20%, transparent);
 }
 
 

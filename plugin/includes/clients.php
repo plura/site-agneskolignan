@@ -80,7 +80,7 @@ add_shortcode('ak-client-collections', function( $args ) {
 
 
 //Client: Featured Image ID
-function ak_client_featured_image_id( int $clientID ) {
+function ak_client_featured_image_id( int $clientID ): int|false {
 
 	$query = new WP_Query([
 		'post_type'      => 'ak_object',

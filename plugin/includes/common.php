@@ -215,8 +215,39 @@ add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $p
 
 }, 10, 5);
 
+/**
+ * The attachment ID of a gallery field's first image.
+ *
+ * ACF hands back gallery items as image arrays, IDs or URLs depending on how the field is
+ * configured, and only the first two yield an ID. reset() rather than [0], because the
+ * array is not guaranteed to be a list.
+ *
+ * @param mixed $gallery Raw get_field() return for a gallery field.
+ * @return int|null
+ */
+function ak_gallery_image_id( mixed $gallery ): ?int {
+
+	if( ! is_array( $gallery ) || ! $gallery ) {
+
+		return null;
+
+	}
+
+	$first = reset( $gallery );
+
+	if( is_array( $first ) ) {
+
+		return isset( $first['ID'] ) ? (int) $first['ID'] : null;
+
+	}
+
+	return is_numeric( $first ) ? (int) $first : null;
+
+}
+
+
 //Post: Featured Image ID
-function ak_post_featured_image_id( int $postID ): string|bool {
+function ak_post_featured_image_id( int $postID ): int|false {
 
 	if( has_post_thumbnail( $postID ) ) {
 

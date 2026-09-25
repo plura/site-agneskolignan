@@ -72,20 +72,8 @@ add_filter('plura_wp_post_featured_image', function( ?string $result, WP_Post $p
 	// Not routed through ak_post_featured_image_id(): that dispatches by post type to an
 	// ak_<type>_featured_image_id() function, and there is no reason to add one for a
 	// single caller.
-	$gallery = get_field( AK_EXHIBITIONS_GALLERY, $post->ID );
+	$id = ak_gallery_image_id( get_field( AK_EXHIBITIONS_GALLERY, $post->ID ) );
 
-	if( ! $gallery ) {
-
-		return null;
-
-	}
-
-	$first = reset( $gallery );
-
-	// ACF returns gallery items as image arrays, IDs or URLs depending on field config;
-	// only the first two yield an attachment ID.
-	$id = is_array( $first ) ? ( $first['ID'] ?? null ) : ( is_numeric( $first ) ? $first : null );
-
-	return $id ? plura_wp_image( (int) $id, $size, $atts ) : null;
+	return $id ? plura_wp_image( $id, $size, $atts ) : null;
 
 }, 10, 5);

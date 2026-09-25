@@ -152,18 +152,15 @@ add_shortcode('ak-objects-related', 'ak_objects_related_shortcode');
 
 
 
-//Object: Featured Image ID
-function ak_object_featured_image_id( $objectID ) {
+/**
+ * Fall back to an object's first gallery image when it has no thumbnail.
+ *
+ * @param int $objectID Object post ID.
+ * @return int|false
+ */
+function ak_object_featured_image_id( $objectID ): int|false {
 
-	$gallery = get_field('ak_object_gallery', $objectID);
-
-	if( $gallery ) {
-
-		return $gallery[0]['ID'];
-
-	}
-
-	return false;
+	return ak_gallery_image_id( get_field('ak_object_gallery', $objectID) ) ?? false;
 
 }
 

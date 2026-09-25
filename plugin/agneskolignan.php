@@ -41,7 +41,6 @@ function ak_init() {
 
 add_action( 'admin_enqueue_scripts', function() {
 
-	//plura_wp_enqueue( scripts: [__DIR__ . '/assets/css/admin.css'], prefix: 'ak-', cache: true );
 
 	wp_enqueue_style( 'ak-admin', plugins_url( "/assets/css/admin.css", __FILE__ ) );
 
@@ -105,7 +104,7 @@ add_action( 'wp_head', function() {
 
 
 
-//custom login page
+//Login Page
 add_action( 'login_enqueue_scripts', function() {
 
 		?> 
@@ -117,7 +116,7 @@ add_action( 'login_enqueue_scripts', function() {
 
 
 
-//add body class
+//Body Class
 add_filter('body_class', function( $classes ) {
 
 	$c = [];

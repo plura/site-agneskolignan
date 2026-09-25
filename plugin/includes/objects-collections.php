@@ -3,18 +3,6 @@
 //Some reading
 //https://support.advancedcustomfields.com/forums/topic/meta-query-with-array-as-values/
 
-/**
- *	. Globals
- * 	. Collections
- * 		- Grid
- * 		- Grid Item URL Hook
- * 		- Grid Item Featured Image Hook
- * 	. Collection
- * 		- Multi Client
- * 	. Rewrite
- *   
- */
-
 function ak_acf($key, $value) {
 
 	$meta = [];
@@ -132,7 +120,7 @@ function ak_collections_shortcode( $args ) {
 add_shortcode('ak-collections', 'ak_collections_shortcode');
 
 
-/* Collections: Grid Item URL Hook */
+//Collections: Grid Item URL Hook
 add_filter('ak_taxonomy_term_url', function(string $url, WP_Term $term): string {
 
 	global $post;
@@ -150,7 +138,7 @@ add_filter('ak_taxonomy_term_url', function(string $url, WP_Term $term): string 
 }, 10, 2);
 
 
-/* Collections: Grid Item Featured Image Hook */
+//Collections: Grid Item Featured Image Hook
 add_filter('ak_term_featured_image', function( WP_Term $term, $term_featured_image, array $term_posts_vars ) {
 
 	global $wp_query;
@@ -204,7 +192,7 @@ add_filter('ak_term_featured_image', function( WP_Term $term, $term_featured_ima
 
 
 
-/* Collection: Multi Client check */
+//Collection: Multi Client Check
 function ak_collection_multi_client( $term ) {
 
 	$clients = get_field('ak_collection_client', $term);
@@ -287,28 +275,4 @@ add_action( 'init', function () {
 
 }, 99 );
 
-
-/* Rewrite */
-add_action( 'init',  function() {
-   /**
-    * ([^/]*) - collection
-    * ([^/]*) - client
-    */
-/*    add_rewrite_rule(
-		'^collections/([^/]+)/([^/]+)/?$',
-		'index.php?ak_object_collection=$matches[1]&ak_object_collection_client=$matches[2]',
-		'top'
-    ); */
-
-} );
-
-
-/* add_filter( 'query_vars', function( array $query_vars ): array {
-
-   $query_vars[] = 'ak_object_collection';
-   $query_vars[] = 'ak_object_collection_client';
-
-   return $query_vars;
-
-} ); */
 

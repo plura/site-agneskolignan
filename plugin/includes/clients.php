@@ -1,20 +1,9 @@
 <?php
 
-/**
- * 	. Globals
- * 	. Clients
- *  	- Grid
- *  . Client
- *  	- Collections
- *   	- Featured Image ID
- *   	- Ignore
- */
-
 
 //Clients: Grid
 function ak_clients_shortcode( $args ) {
 
-/* 	global $AK_CLIENTS_DEFAULT; */
 
 	$atts = shortcode_atts([
 		// Query vars

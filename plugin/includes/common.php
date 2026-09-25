@@ -1,31 +1,13 @@
 <?php
 
-/**
- *	. Globals
- *	. Header Title
- *	. Posts
- *		. Grid
- *		. Grid Item (Post)
- *	. Post
- *		. Gallery
- *	. Taxonomy
- *		. Grid
- *		. Grid Item
- *		. Grid Item URL
- *		. Vars
- *	. Term
- *		. Featured Image
- */
-
 
 // Scopes the plura_wp_posts_query filter below to queries coming from ak_posts().
 const AK_POSTS_CONTEXT = 'ak-posts';
 
 
 
-/* POSTS */
 
-//Objects: Grid
+//Posts: Grid
 function ak_posts(
 	// Query vars
 	string $type = 'ak_object',
@@ -530,7 +512,6 @@ function ak_taxonomy_shortcode( $args ) {
 		$atts['parent'] = get_queried_object()->term_id;
 	}
 
-	//return ak_taxonomy( ...array_intersect_key( $atts, array_flip( $tax_keys ) ) );
 	return ak_taxonomy( ...array_intersect_key( $atts, array_flip( $tax_keys ) ) );
 }
 

@@ -1,23 +1,6 @@
 <?php
 
-/**
- *	. Globals
- *	. Objects 
- *   	. Query Vars
- *   	. Grid
- * 		. Related Objects
- *  . Object
- *   	. Featured Image ID  	
- *     	. Info
- *     	. Terms
- *     	. Term URL Hook
- *  . Collection 
- *  	. Featured Object Image ID
- *  . Permalink Structure
- */
 
-
-//Globals
 $AK_OBJECTS_RELATED_DEFAULTS = [
 	'limit' => 6
 ];
@@ -99,7 +82,7 @@ add_shortcode('ak-objects', 'ak_objects_shortcode');
 
 
 
-//related objects of the same object
+//Objects: Related
 function ak_objects_related( $args ) {
 	$tax = [];
 
@@ -163,7 +146,6 @@ add_shortcode('ak-objects-related', 'ak_objects_related_shortcode');
 
 
 
-// OBJECT
 
 //Object: Featured Image ID
 function ak_object_featured_image_id( $objectID ) {
@@ -318,7 +300,7 @@ add_shortcode('ak-object-info', 'ak_object_info_shortcode');
 
 
 
-/* Collections: Grid Item URL Hook */
+//Collections: Grid Item URL Hook
 add_filter('ak_taxonomy_term_url', function(string $url, WP_Term $term): string {
 
 	//if number of clients of one collection is more than one, an extra parameter should be added

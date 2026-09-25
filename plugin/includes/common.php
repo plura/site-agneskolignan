@@ -283,43 +283,32 @@ function ak_post_featured_image_id( int $postID ): string|bool {
 
 
 
-//Post: Gallery
+/**
+ * Post: Gallery
+ *
+ * plura_wp_gallery() already emits data-thumb-src on each item, which is what Thumbs
+ * reads, and Carousel is pointed at .plura-wp-gallery-item through its classes option in
+ * scripts.js rather than needing f-carousel__slide in the markup.
+ *
+ * The legacy id and data-gallery-type are dropped — nothing in the CSS or JS referenced
+ * them. $type is kept in the signature for the shortcode's sake but no longer emitted.
+ *
+ * @param int    $id       Post to read the gallery field from.
+ * @param string $posttype Builds the ACF field name, ak_{posttype}_gallery.
+ * @param string $type     Unused; retained so the shortcode signature does not change.
+ * @return string|null
+ */
 function ak_gallery( int $id, string $posttype = 'post', string $type = 'carousel' ): ?string {
 
-	$gallery = get_field('ak_' . $posttype . '_gallery', $id );
-
-	if( $gallery ) {
-
-		$html = [];
-
-		foreach( $gallery as $image ) {
-
-			$attr_img_holder = [
-				'class' => ['f-carousel__slide'],
-				'data-thumb-src' => $image['sizes']['medium']
-			];
-
-			$attr_img = [
-				'data-fancybox' => 'ak-gallery',
-				'data-lazy-src' => $image['url'],				
-				'height' => $image['height'],
-				'width' => $image['width']
-			];
-
-			$html[] = "<div " . plura_attributes( $attr_img_holder ) . "><img " . plura_attributes( $attr_img ) . "/></div>";
-
-		}
-
-		$attr = [
-			'class' => ['f-carousel', 'ak-gallery'],
-			'id' => 'ak-' . $posttype . '-gallery',
-			'data-type' => $posttype,
-			'data-gallery-type' => $type
-		];
-
-		return "<div " . plura_attributes( $attr ) . ">" . implode('', $html) . "</div>";
-
-	}
+	// Images come back at 'large', plura_wp_image()'s default, which plura_wp_gallery()
+	// gives no way to override. Fancybox resolves href || currentSrc || src, so the
+	// lightbox opens that rather than the full-size file the old markup carried.
+	return plura_wp_gallery(
+		source:     $id,
+		source_key: 'ak_' . $posttype . '_gallery',
+		class:      'f-carousel ak-gallery',
+		context:    $posttype
+	) ?: null;
 
 }
 

@@ -78,12 +78,18 @@ if( postType.match(/ak_(exhibition|object)/) ) {
 
 	if( gallery ) {
 
+		// Carousel reads its slide class from the classes option rather than requiring
+		// f-carousel__slide in the markup, so it adopts plura_wp_gallery()'s items as-is.
+		// initLayout() still builds the viewport itself.
 		new Carousel( gallery, {
 			adaptiveHeight: true,
-			Dots: false
+			Dots: false,
+			classes: { slide: 'plura-wp-gallery-item' }
 		}, { Thumbs });
 
-		Fancybox.bind('[data-fancybox="ak-gallery"]', {
+		// Bound to the images rather than a data-fancybox attribute: Fancybox resolves
+		// href || currentSrc || src, and plura_wp_image() always emits src.
+		Fancybox.bind('.ak-gallery .plura-wp-gallery-item img', {
 			Images: {
 				Panzoom: {},
 			},

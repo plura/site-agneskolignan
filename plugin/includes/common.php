@@ -347,11 +347,11 @@ function ak_taxonomy(
 		context: AK_TERMS_CONTEXT,
 		params:  ['ignore_term_order' => (bool) $order, 'child_of' => $parent, 'meta' => $meta],
 
-		// link: true wraps each tile in a single anchor, as link: 1 does for posts, which
-		// is what ak_taxonomy_grid_item() achieved with the click handler in scripts.js.
+		// link: 1 wraps each tile in a single anchor, matching ak_posts(), which is what
+		// ak_taxonomy_grid_item() achieved with the click handler in scripts.js.
 		class: 'grid',
 		label: $label,
-		link:  true
+		link:  1
 	);
 
 	// plura_wp_terms() returns '' when nothing matches; ak_taxonomy() returned null.

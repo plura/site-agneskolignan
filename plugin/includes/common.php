@@ -290,51 +290,40 @@ function ak_post_featured_image_id( int $postID ): string|bool {
  * reads, and Carousel is pointed at .plura-wp-gallery-item through its classes option in
  * scripts.js rather than needing f-carousel__slide in the markup.
  *
- * The legacy id and data-gallery-type are dropped — nothing in the CSS or JS referenced
- * them. $type is kept in the signature for the shortcode's sake but no longer emitted.
- *
- * @param int    $id       Post to read the gallery field from.
- * @param string $posttype Builds the ACF field name, ak_{posttype}_gallery.
- * @param string $type     Unused; retained so the shortcode signature does not change.
- * @return string|null
+ * The legacy container id and data-gallery-type are dropped — nothing in the CSS or JS
+ * referenced them — and with them the 'type' attribute, which only fed the latter.
  */
-function ak_gallery( int $id, string $posttype = 'post', string $type = 'carousel' ): ?string {
+add_shortcode('ak-gallery', function( $args ) {
+
+	$atts = shortcode_atts([
+		'id' => '',
+		'posttype' => 'post'
+	], $args );
+
+	// Read from $atts, not $args: $args holds only what the shortcode was given, so a
+	// bare [ak-gallery] hit an undefined key here and tested is_singular('ak_').
+	$singular = is_singular( 'ak_' . $atts['posttype'] );
+
+	if( empty( $atts['id'] ) && ! $singular ) {
+
+		return null;
+
+	}
+
+	// A singular view takes precedence over any id passed in, as it always has.
+	$id = $singular
+		? ( function_exists('plura_wpml_id') ? plura_wpml_id( get_the_ID() ) : get_the_ID() )
+		: (int) $atts['id'];
 
 	// Images come back at 'large', plura_wp_image()'s default, which plura_wp_gallery()
 	// gives no way to override. Fancybox resolves href || currentSrc || src, so the
 	// lightbox opens that rather than the full-size file the old markup carried.
 	return plura_wp_gallery(
 		source:     $id,
-		source_key: 'ak_' . $posttype . '_gallery',
+		source_key: 'ak_' . $atts['posttype'] . '_gallery',
 		class:      'f-carousel ak-gallery',
-		context:    $posttype
+		context:    $atts['posttype']
 	) ?: null;
-
-}
-
-add_shortcode('ak-gallery', function( $args) {
-
-	$atts = shortcode_atts([
-		'id' => '',
-		'posttype' => 'post',
-		'type' => 'carousel'
-	], $args );
-
-	if( !empty( $atts['id'] ) || is_singular('ak_' . $args['posttype']) ) {
-
-		if( is_singular('ak_' . $args['posttype']) ) {
-
-			$atts['id'] = function_exists('plura_wpml_id') ? plura_wpml_id( get_the_ID() ) : get_the_ID();
-
-		} else {
-
-			$atts['id'] = (int) $atts['id'];
-
-		}
-
-		return ak_gallery( ...$atts );
-
-	}
 
 });
 

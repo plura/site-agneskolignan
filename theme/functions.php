@@ -9,7 +9,9 @@ add_action( 'wp_head', function() { ?>
 
 add_action('wp_enqueue_scripts', 'my_theme_enqueue_styles');
 function my_theme_enqueue_styles() {
-   wp_enqueue_style('child-style', get_theme_file_uri('/style.css'), [], time());
+   // filemtime, not time(): the version only needs to change when the file does, and an
+   // SFTP upload updates the mtime. time() made the URL unique on every request.
+   wp_enqueue_style('child-style', get_theme_file_uri('/style.css'), [], filemtime( get_theme_file_path('/style.css') ));
 }
 
 add_action( 'wp_enqueue_scripts', 'ak_theme_styles' );
@@ -37,7 +39,9 @@ function ak_theme_styles() {
 		];
 	}
 
-	plura_wp_enqueue( scripts: $scripts, prefix: 'ak-', cache: false );
+	// cache: true versions local assets with filemtime instead of time(), so browsers can
+	// actually cache them. Flip to false only while actively editing CSS or JS.
+	plura_wp_enqueue( scripts: $scripts, prefix: 'ak-', cache: true );
 }
 
 

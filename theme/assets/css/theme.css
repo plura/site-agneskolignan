@@ -129,18 +129,6 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 }
 
 
-/* group: list */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="list"]::before {
-	color: var(--ak-globals-theme-color-orange);
-}
-
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="list"] :is(.plura-wp-post, .plura-wp-term) {
-	color: var(--ak-globals-theme-color-grey-dark);
-	font-size: var(--ak-globals-theme-font-size-xsmall);
-	text-transform: uppercase;
-}
-
-
 /* exhibition: datetime */
 .single-ak_exhibition .ak-datetime {
 	font-size: var(--ak-globals-theme-font-size-xsmall);

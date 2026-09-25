@@ -217,47 +217,6 @@ header > .wp-block-group > .wp-block-group {
 	display: grid;
 }
 
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
-	--n: 2;
-	gap: var(--ak-globals-grid-gap);
-}
-
-@media all and (min-width: 768px) {
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
-		--n: 3;
-	}
-}
-
-@media all and (min-width: 991px) {
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
-		--n: 4;
-	}
-}
-
-@media all and (min-width: 1200px) {
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"] {
-		--n: 5;
-	}
-}
-
-
-/* group: related */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-related] {
-	--n: 3;
-}
-
-@media all and (min-width: 768px) {
-	:is(.plura-wp-posts, .plura-wp-terms)[data-layout="grid"][data-related] {
-		--n: 6;
-	}
-}
-
-
-/* group: list */
-:is(.plura-wp-posts, .plura-wp-terms)[data-layout="list"] {
-	gap: calc( var(--ak-globals-grid-gap) / 6);
-}
-
 
 /* exhibition: datetime */
 .ak-datetime {

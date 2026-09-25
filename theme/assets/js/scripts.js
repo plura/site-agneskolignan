@@ -50,18 +50,6 @@ if( logo && nav ) {
 }
 
 
-//Objects Grid
-//use title link to link entire grid item
-document.querySelectorAll(':is(.plura-wp-posts, .plura-wp-terms) :is(.plura-wp-post, .plura-wp-term).full').forEach( element => {
-	element.addEventListener('click', event => {
-		const link = element.querySelector(':is(.plura-wp-post-title-link, .plura-wp-term-title-link)');
-		if( link ) {
-			window.location.href = link.href;
-		}
-	});
-});
-
-
 if( postType.match(/ak_(exhibition|object)/) ) {
 
 	const
@@ -106,10 +94,11 @@ if( postType.match(/ak_(exhibition|object)/) ) {
 
 
 // plura_wp_data.type is 'ak_object' on the object taxonomy archives too, not only on a
-// single object, and those pages carry no .ak-object-info-holder.
+// single object; plura 0.12.0 added the archive flag, which says so directly rather than
+// inferring it from the absence of .ak-object-info-holder.
 const objectInfo = document.querySelector('.ak-object-info-holder');
 
-if( postType === 'ak_object' && objectInfo ) {
+if( postType === 'ak_object' && ! plura_wp_data?.archive && objectInfo ) {
 
 	let toggle_status;
 

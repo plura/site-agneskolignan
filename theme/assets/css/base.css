@@ -1,8 +1,10 @@
 /**
  * Design tokens and the element defaults that read them.
  *
- * The type scale is a fixed px ladder multiplied by --ak-scale, which
- * steps up at two breakpoints below, so every size moves together.
+ * The type scale is a rem ladder multiplied by --ak-scale, which steps up at two
+ * breakpoints below, so every size moves together. rem rather than px so the scale
+ * respects the reader's browser font-size setting; --ak-grid-gap stays in px, since a
+ * hairline should not scale.
  */
 
 

@@ -4,6 +4,9 @@
 // Scopes the plura_wp_posts_query filter below to queries coming from ak_posts().
 const AK_POSTS_CONTEXT = 'ak-posts';
 
+// The same, for ak_taxonomy() and the plura_wp_terms_query filter.
+const AK_TERMS_CONTEXT = 'ak-terms';
+
 
 
 
@@ -331,25 +334,78 @@ function ak_taxonomy(
     // Output
     string|null $label = null
 ) {
-    $terms = get_terms(
-        ak_taxonomy_vars(
-			// Required
-            tax: $tax,
+	$terms = plura_wp_terms(
+		taxonomy: $tax,
 
-			// Query parameters
-			order: $order,
-            exclude: $exclude,
-            include: $include,
-            limit: $limit,
-			parent: $parent,
-			meta: $meta
-        )
-    );
+		exclude: $exclude ?? [],
+		ids:     $include ?? [],
+		limit:   $limit,
+		orderby: $order ?: 'name',
 
-    if ($terms) {
-        return ak_taxonomy_grid($terms, $label);
-    }
+		// ignore_term_order, child_of and meta_query have no native equivalent — see the
+		// plura_wp_terms_query filter below.
+		context: AK_TERMS_CONTEXT,
+		params:  ['ignore_term_order' => (bool) $order, 'child_of' => $parent, 'meta' => $meta],
+
+		output: 'objects'
+	);
+
+	// Unlike plura_wp_posts(), the terms function returns before its empty check, so
+	// output:'objects' always yields an array. ak_taxonomy_grid() still reads $terms[0].
+	if( empty( $terms ) ) {
+
+		return null;
+
+	}
+
+	return ak_taxonomy_grid( $terms, $label );
 }
+
+
+/**
+ * Term query clauses that plura_wp_terms_query() cannot express, ported from
+ * ak_taxonomy_vars() unchanged.
+ *
+ * child_of rather than parent is deliberate: the original took every descendant, while
+ * plura_wp_terms()' parent argument means direct children only.
+ *
+ * @param array $query_params WP_Term_Query arguments.
+ * @param array $args         Arguments plura_wp_terms_query() was called with.
+ * @return array
+ */
+add_filter('plura_wp_terms_query', function( array $query_params, array $args ): array {
+
+	if( ( $args['context'] ?? '' ) !== AK_TERMS_CONTEXT ) {
+
+		return $query_params;
+
+	}
+
+	$params = $args['params'] ?? [];
+
+	// The original paired every explicit orderby with ignore_term_order, so a chosen order
+	// wins over the sequence the term-order plugin stores.
+	if( !empty( $params['ignore_term_order'] ) ) {
+
+		$query_params['ignore_term_order'] = 1;
+
+	}
+
+	if( !empty( $params['child_of'] ) ) {
+
+		$query_params['child_of'] = $params['child_of'];
+
+	}
+
+	if( !empty( $params['meta'] ) ) {
+
+		$query_params['meta_query'] = $params['meta'];
+
+	}
+
+	return $query_params;
+
+}, 10, 2);
 
 
 //Taxonomy: Grid

@@ -66,13 +66,6 @@ if( postType.match(/ak_(exhibition|object)/) ) {
 
 	if( gallery ) {
 
-		// Carousel's own stylesheet lays slides out via .f-carousel__slide — flex and
-		// width — so overriding classes.slide is not enough: it changes what Carousel
-		// queries but leaves the items unstyled, and they all render at once. Tag the
-		// items instead and let the library keep its defaults.
-		gallery.querySelectorAll('.plura-wp-gallery-item')
-			.forEach( item => item.classList.add('f-carousel__slide') );
-
 		new Carousel( gallery, {
 			adaptiveHeight: true,
 			Dots: false

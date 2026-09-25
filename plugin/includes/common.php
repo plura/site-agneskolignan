@@ -278,7 +278,11 @@ add_shortcode('ak-gallery', function( $args ) {
 		source:     $id,
 		source_key: 'ak_' . $atts['posttype'] . '_gallery',
 		class:      'f-carousel ak-gallery',
-		context:    $atts['posttype']
+		context:    $atts['posttype'],
+
+		// Carousel's stylesheet sizes slides through .f-carousel__slide, so the class has
+		// to be on the markup; scripts.js used to add it before init.
+		item_class: 'f-carousel__slide'
 	) ?: null;
 
 });

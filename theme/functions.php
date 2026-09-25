@@ -7,13 +7,6 @@ add_action( 'wp_head', function() { ?>
 	<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 <?php }, 1 );
 
-add_action('wp_enqueue_scripts', 'my_theme_enqueue_styles');
-function my_theme_enqueue_styles() {
-   // filemtime, not time(): the version only needs to change when the file does, and an
-   // SFTP upload updates the mtime. time() made the URL unique on every request.
-   wp_enqueue_style('child-style', get_theme_file_uri('/style.css'), [], filemtime( get_theme_file_path('/style.css') ));
-}
-
 add_action( 'wp_enqueue_scripts', 'ak_theme_styles' );
 function ak_theme_styles() {
 	$scripts = [

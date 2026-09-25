@@ -12,36 +12,11 @@ Tags:         light, dark, two-columns, right-sidebar, responsive-layout, access
 Text Domain:  twentytwentyfourchild
 */
 
-
-
-/* center nav */
-@media all and (min-width: 991px) {
-
-	header nav {
-		padding-left: calc( 10px * 2 );
-	}
-
-}
-
-
-footer #sb_instagram .sbi_follow_btn.sbi_custom a {
-	color: black;
-	background-color: transparent !important;
-	font-family: var(--ak-font-heading);
-}
-
-/* fixes a bug where a slideshow shows an extra thumb */
-footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error {
-	display: none;
-}
-
-footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p {
-	display: contents;
-	visibility: collapse;
-}
-
-footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p a {
-	font-size: 0;
-	visibility: visible;
-}
-
+/*
+ * Header only — this file is not enqueued, and a rule added below would do nothing.
+ * WordPress reads the block above to identify the theme; it does not need the CSS.
+ *
+ * All styles live in assets/css/ — base, layout, theme, grid — enqueued in that order
+ * by ak_theme_styles() in functions.php. Keeping them in one place matters: a rename
+ * sweep scoped to assets/css/ once reported itself clean while a stale token sat here.
+ */

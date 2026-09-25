@@ -85,6 +85,16 @@ header > .wp-block-group > .wp-block-group {
 }
 
 
+/* header: nav */
+@media all and (min-width: 991px) {
+
+	header nav {
+		padding-left: calc( 10px * 2 );
+	}
+
+}
+
+
 /* header: home */
 .home header nav .wp-block-navigation-item.ak-nav-logo-holder {
 	display: none;

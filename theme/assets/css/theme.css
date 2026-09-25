@@ -210,6 +210,30 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 }
 
 
+/* footer: instagram feed (Smash Balloon) */
+footer #sb_instagram .sbi_follow_btn.sbi_custom a {
+	color: black;
+	background-color: transparent !important;
+	font-family: var(--ak-font-heading);
+}
+
+/* A failed image leaves an empty anchor behind, which the slideshow counts as an extra
+   thumb. Hide it, and keep the caption link that follows it reachable. */
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error {
+	display: none;
+}
+
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p {
+	display: contents;
+	visibility: collapse;
+}
+
+footer #sb_instagram #sbi_images .sbi_item .sbi_photo_wrap > a.sbi_photo.sbi_imgLiquid_error + p a {
+	font-size: 0;
+	visibility: visible;
+}
+
+
 /* font family applications — must come last to override weight/size set above */
 header nav .wp-block-navigation-item .wp-block-navigation-item__content,
 :is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,

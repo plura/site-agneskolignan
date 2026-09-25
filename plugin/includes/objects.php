@@ -270,10 +270,8 @@ function ak_object_info_fields(): array {
 function ak_object_info_shortcode( $args ) {
 
 	$atts = shortcode_atts( [
-		//'class' => '',
 		'exclude' => null,
-		'id' => null,
-		//'layout' => ''
+		'id'      => null
 	], $args );
 
 	if( is_singular( ['ak_object'] ) && ( empty( $args['id'] ) || preg_match('/true/', $args['id']) ) ) {

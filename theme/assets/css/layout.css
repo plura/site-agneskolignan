@@ -1,3 +1,16 @@
+/**
+ * Structure: box model, flow, position, sizing.
+ *
+ * Enqueued third, after base.css and before theme.css, so a declaration moved between
+ * this file and that one changes which rule wins. Check the cascade before relocating
+ * anything — theme.css carries !important overrides against WordPress core paddings that
+ * depend on landing later.
+ *
+ * A few strays sit on the wrong side of the line (a background-color here, align-items in
+ * theme.css). They are left alone deliberately, for the same reason.
+ */
+
+
 /* page: top padding */
 :is(
 	.page-template-wp-custom-template-ak-archive-i,

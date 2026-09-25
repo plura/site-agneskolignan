@@ -1,3 +1,12 @@
+/**
+ * Skin: colour, type, decoration, transitions.
+ *
+ * Enqueued fourth, after layout.css, which is what lets the !important overrides here
+ * beat WordPress core block styles. Moving a declaration to layout.css moves it earlier
+ * in the cascade — check before relocating anything.
+ */
+
+
 /* title */
 body:not(.single-ak_object) .plura-wp-title {
 	text-align: center;

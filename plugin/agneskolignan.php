@@ -49,9 +49,17 @@ add_action( 'admin_enqueue_scripts', function() {
 
 
 
-//https://wordpress.stackexchange.com/a/237795
-
-function wpdocs_channel_nav_class( $classes, $item, $args ) {
+/**
+ * Expose a menu item's target object id as a class, so a nav item can be styled by what
+ * it points at rather than by menu position.
+ *
+ * https://wordpress.stackexchange.com/a/237795
+ *
+ * @param array   $classes Classes for the menu item's <li>.
+ * @param WP_Post $item    The menu item.
+ * @return array
+ */
+function ak_nav_menu_object_id_class( array $classes, $item ): array {
 
 	if( isset( $item->object_id ) ) {
 
@@ -60,34 +68,10 @@ function wpdocs_channel_nav_class( $classes, $item, $args ) {
 	}
 
 	return $classes;
-}
-
-add_filter( 'nav_menu_css_class' , 'wpdocs_channel_nav_class' , 10, 4 );
-
-
-function ak_enqueue_integrity($html, $handle, $src = "", $media = "") {
-
-	if( $handle === 'leaflet' ) {
-
-		if( preg_match('/\.js/', $html) ) {
-
-			return preg_replace('/(src)/', 'integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin="" $1', $html);
-
-		} elseif( preg_match('/\.css/', $html) ) {
-
-			return preg_replace('/(href)/', 'integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" $1', $html);
-
-		}
-
-	}
-   
-	return $html;
 
 }
 
-add_filter('style_loader_tag', 'ak_enqueue_integrity', 10, 2 );
-
-add_filter('script_loader_tag', 'ak_enqueue_integrity', 10, 4);
+add_filter( 'nav_menu_css_class', 'ak_nav_menu_object_id_class', 10, 2 );
 
 
 add_action( 'wp_head', function() {
@@ -103,16 +87,6 @@ add_action( 'wp_head', function() {
 } );
 
 
-
-//Login Page
-add_action( 'login_enqueue_scripts', function() {
-
-		?> 
-		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-		<link rel='stylesheet' id='ak-login-css' href='<?php echo plugins_url('includes/css/login.css', __FILE__ ) . '?' . time(); ?>' type='text/css' media='all' />
-
-		<?php 
-} );
 
 
 

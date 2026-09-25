@@ -22,7 +22,9 @@ function ak_config_bg_images() {
 }
 
 
-function ak_config_bg_image( $random = true ) {
+// Always random: the $random parameter this used to take was never read, and no caller
+// ever passed one.
+function ak_config_bg_image() {
 
 	$bgs = ak_config_bg_images();
 

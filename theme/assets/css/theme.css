@@ -32,8 +32,8 @@ body:not(.single-ak_object) .plura-wp-title {
 
 @media all and (min-width: 768px) {
 	.ak-object-info-holder {
-		padding-left: calc( 2 * var(--ak-globals-theme-gap) ) !important;
-		padding-top: calc( 2 * var(--ak-globals-theme-gap) ) !important;
+		padding-left: calc( 2 * var(--ak-gap) ) !important;
+		padding-top: calc( 2 * var(--ak-gap) ) !important;
 	}
 }
 
@@ -104,7 +104,7 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 	.plura-wp-post-meta .plura-wp-post-meta-item[data-label],
 	.plura-wp-post-terms .plura-wp-post-terms-taxonomy[data-taxonomy]
 )::before {
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
+	font-weight: var(--ak-font-weight-xbold);
 }
 
 .single-ak_object .plura-wp-post-term:not(:only-child):not(:last-child) .plura-wp-post-term-link::after,
@@ -124,8 +124,8 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 
 /* group: labels */
 :is(.plura-wp-posts, .plura-wp-terms)[data-label]::before {
-	font-size: var(--ak-globals-theme-font-size-small);
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
+	font-size: var(--ak-font-size-small);
+	font-weight: var(--ak-font-weight-xbold);
 	text-transform: uppercase;
 }
 
@@ -156,12 +156,12 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 
 /* object: related */
 .plura-wp-posts[data-related] {
-	gap: var(--ak-globals-grid-gap);
+	gap: var(--ak-grid-gap);
 }
 
 .plura-wp-posts[data-related]::before {
 	grid-column: 1 / -1;
-	margin-bottom: calc( var(--ak-globals-theme-gap) / 2);
+	margin-bottom: calc( var(--ak-gap) / 2);
 }
 
 
@@ -200,13 +200,13 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 
 .wpcf7-form input[type="submit"] {
 	border: none;
-	font-size: var(--ak-globals-theme-font-size-small);
-	font-weight: var(--ak-globals-theme-font-size-weight-xtra-bold);
+	font-size: var(--ak-font-size-small);
+	font-weight: var(--ak-font-weight-xbold);
 	text-transform: uppercase;
 }
 
 .wpcf7-form .wpcf7-not-valid-tip {
-	font-size: var(--ak-globals-theme-font-size-xsmall);
+	font-size: var(--ak-font-size-xsmall);
 }
 
 
@@ -214,14 +214,14 @@ header > .wp-block-group nav .wp-block-navigation-item a {
 header nav .wp-block-navigation-item .wp-block-navigation-item__content,
 :is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,
 .single-ak_object .ak-object-core .ak-object-info-toggle-trigger::after {
-	font-family: var(--ak-globals-theme-font-heading);
+	font-family: var(--ak-font-heading);
 	font-weight: 400;
 	font-style: normal;
 }
 
 :is(.plura-wp-posts, .plura-wp-terms)[data-label]::before,
 .single-ak_object .ak-object-core .ak-object-info-toggle-trigger::after {
-	font-size: var(--ak-globals-theme-font-size-small);
+	font-size: var(--ak-font-size-small);
 	letter-spacing: 2px;
 	text-transform: none;
 }

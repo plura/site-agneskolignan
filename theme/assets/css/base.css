@@ -1,7 +1,7 @@
 /**
  * Design tokens and the element defaults that read them.
  *
- * The type scale is a fixed px ladder multiplied by --ak-globals-theme-increment, which
+ * The type scale is a fixed px ladder multiplied by --ak-scale, which
  * steps up at two breakpoints below, so every size moves together.
  */
 
@@ -10,40 +10,40 @@
 :root {
 
 	/* typography */
-	--ak-globals-theme-font-heading: "Permanent Marker", cursive;
-	--ak-globals-theme-font-body: "Open Sans", sans-serif;
+	--ak-font-heading: "Permanent Marker", cursive;
+	--ak-font-body: "Open Sans", sans-serif;
 
-	--ak-globals-theme-increment: .8;
-	--ak-globals-theme-line-height-increment-header: 25 / 20;
-	--ak-globals-theme-line-height-increment-body: 32 / 20;
+	--ak-scale: .8;
+	--ak-line-height-ratio-heading: 1.25;
+	--ak-line-height-ratio-body: 1.6;
 
-	--ak-globals-theme-font-size-h1: calc( 52px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-h2: calc( 43px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-h3: calc( 34px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-h4: calc( 25px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-body: calc( 16px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-small: calc( 14px * var(--ak-globals-theme-increment) );
-	--ak-globals-theme-font-size-xsmall: calc( 12px * var(--ak-globals-theme-increment) );
+	--ak-font-size-h1: calc( 3.25rem * var(--ak-scale) );
+	--ak-font-size-h2: calc( 2.6875rem * var(--ak-scale) );
+	--ak-font-size-h3: calc( 2.125rem * var(--ak-scale) );
+	--ak-font-size-h4: calc( 1.5625rem * var(--ak-scale) );
+	--ak-font-size-body: calc( 1rem * var(--ak-scale) );
+	--ak-font-size-small: calc( .875rem * var(--ak-scale) );
+	--ak-font-size-xsmall: calc( .75rem * var(--ak-scale) );
 
-	--ak-globals-theme-font-line-height-h1: calc( var(--ak-globals-theme-font-size-h1) * var(--ak-globals-theme-line-height-increment-header) );
-	--ak-globals-theme-font-line-height-h2: calc( var(--ak-globals-theme-font-size-h2) * var(--ak-globals-theme-line-height-increment-header) );
-	--ak-globals-theme-font-line-height-h3: calc( var(--ak-globals-theme-font-size-h3) * var(--ak-globals-theme-line-height-increment-header) );
-	--ak-globals-theme-font-line-height-h4: calc( var(--ak-globals-theme-font-size-h4) * var(--ak-globals-theme-line-height-increment-header) );
+	--ak-line-height-h1: calc( var(--ak-font-size-h1) * var(--ak-line-height-ratio-heading) );
+	--ak-line-height-h2: calc( var(--ak-font-size-h2) * var(--ak-line-height-ratio-heading) );
+	--ak-line-height-h3: calc( var(--ak-font-size-h3) * var(--ak-line-height-ratio-heading) );
+	--ak-line-height-h4: calc( var(--ak-font-size-h4) * var(--ak-line-height-ratio-heading) );
 
-	--ak-globals-theme-font-line-height-body: calc( var(--ak-globals-theme-font-size-body) * var(--ak-globals-theme-line-height-increment-body) );
-	--ak-globals-theme-font-line-height-xsmall: calc( var(--ak-globals-theme-font-size-xsmall) * var(--ak-globals-theme-line-height-increment-body) );
+	--ak-line-height-body: calc( var(--ak-font-size-body) * var(--ak-line-height-ratio-body) );
+	--ak-line-height-xsmall: calc( var(--ak-font-size-xsmall) * var(--ak-line-height-ratio-body) );
 
-	--ak-globals-theme-font-size-weight-body: 400;
-	--ak-globals-theme-font-size-weight-xtra-bold: 700;
+	--ak-font-weight-body: 400;
+	--ak-font-weight-xbold: 700;
 
 	/* colors */
-	--ak-globals-theme-color-orange: #f47820;
+	--ak-color-orange: #f47820;
 
 	/* spacing */
-	--ak-globals-theme-gap: 20px;
+	--ak-gap: 20px;
 
 	/* grid */
-	--ak-globals-grid-gap: 1px;
+	--ak-grid-gap: 1px;
 
 }
 
@@ -51,39 +51,39 @@
 /* tokens: scale steps */
 @media (min-width: 768px) {
 	:root {
-		--ak-globals-theme-increment: .9;
+		--ak-scale: .9;
 	}
 }
 
 @media (min-width: 991px) {
 	:root {
-		--ak-globals-theme-increment: 1;
+		--ak-scale: 1;
 	}
 }
 
 
 /* elements */
 h1 {
-	font-size: var(--ak-globals-theme-font-size-h1);
-	line-height: var(--ak-globals-theme-font-line-height-h1);
+	font-size: var(--ak-font-size-h1);
+	line-height: var(--ak-line-height-h1);
 }
 
 h2 {
-	font-size: var(--ak-globals-theme-font-size-h2);
-	line-height: var(--ak-globals-theme-font-line-height-h2);
+	font-size: var(--ak-font-size-h2);
+	line-height: var(--ak-line-height-h2);
 }
 
 h3 {
-	font-size: var(--ak-globals-theme-font-size-h3);
-	line-height: var(--ak-globals-theme-font-line-height-h3);
+	font-size: var(--ak-font-size-h3);
+	line-height: var(--ak-line-height-h3);
 }
 
 h4 {
-	font-size: var(--ak-globals-theme-font-size-h4);
-	line-height: var(--ak-globals-theme-font-line-height-h4);
+	font-size: var(--ak-font-size-h4);
+	line-height: var(--ak-line-height-h4);
 }
 
 body {
-	font-family: var(--ak-globals-theme-font-body);
-	line-height: var(--ak-globals-theme-font-line-height-body);
+	font-family: var(--ak-font-body);
+	line-height: var(--ak-line-height-body);
 }

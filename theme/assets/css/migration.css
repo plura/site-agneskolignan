@@ -19,7 +19,7 @@
 
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--ak-globals-grid-gap);
+	gap: var(--ak-grid-gap);
 	justify-content: center;
 }
 
@@ -48,7 +48,7 @@
 	padding: 1.5rem;
 	position: relative;
 	text-decoration: none;
-	width: calc( ( 100% - ( var(--ak-globals-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
+	width: calc( ( 100% - ( var(--ak-grid-gap) * ( var(--n) - 1 ) ) ) / var(--n) );
 }
 
 
@@ -103,17 +103,17 @@
    otherwise take base.css's h3 rule at more than double that. */
 :is(.plura-wp-posts, .plura-wp-terms).grid :is(.plura-wp-post-title, .plura-wp-term-title) {
 	font-family: var(--wp--preset--font-family--heading);
-	font-size: var(--ak-globals-theme-font-size-body);
-	font-weight: var(--ak-globals-theme-font-size-weight-body);
-	line-height: var(--ak-globals-theme-font-line-height-body);
+	font-size: var(--ak-font-size-body);
+	font-weight: var(--ak-font-weight-body);
+	line-height: var(--ak-line-height-body);
 	margin: 0;
 }
 
 /* Collapsed rather than hidden, so it takes no room in the flow until revealed and the
    title stays put. max-height is a ceiling, not a measurement: long excerpts clip. */
 :is(.plura-wp-posts, .plura-wp-terms).grid .plura-wp-post-excerpt {
-	font-size: var(--ak-globals-theme-font-size-xsmall);
-	line-height: var(--ak-globals-theme-font-line-height-xsmall);
+	font-size: var(--ak-font-size-xsmall);
+	line-height: var(--ak-line-height-xsmall);
 	margin-block-start: 0;
 	max-height: 0;
 	opacity: 0;

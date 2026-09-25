@@ -402,7 +402,7 @@ function ak_taxonomy_shortcode( $args ) {
 		'type'       => 'ak_object',
 	];
 
-	$atts = shortcode_atts( $defaults, $args );
+	$atts = ak_vals( shortcode_atts( $defaults, $args ), $defaults );
 
 	// Keys expected by each function
 	$object_keys = [
@@ -448,50 +448,138 @@ function ak_register_shortcodes() {
 
 
 /**
- * Normalizes a given value to one or more specified types.
+ * Normalize a shortcode attribute to one of the given types.
  *
- * @param mixed $value The input value from the shortcode attribute.
- * @param string|array $types The desired type(s), e.g., 'int', 'array', 'bool'.
- * @return mixed The normalized value, or null if no valid type is matched.
+ * @param mixed        $value Raw attribute value; shortcodes always deliver strings.
+ * @param string|array $types Desired type(s): 'int', 'array', 'bool'.
+ * @return mixed The normalized value, or null when none of the types match.
  */
-function ak_val(mixed $value, string|array $types): mixed {
+function ak_val( mixed $value, string|array $types ): mixed {
+
 	$types = (array) $types;
 
-	// Handle null
-	if (is_null($value)) return null;
+	if( is_null( $value ) ) {
 
-	// Handle int. This will also handle numeric strings like "123".
-	if (in_array('int', $types, true)) {
-		if ((is_numeric($value) && !is_string($value)) || (is_string($value) && ctype_digit($value))) {
-            // Check if it's a simple numeric value, not a comma-separated list.
-            if (strpos($value, ',') === false) {
-			    return (int) $value;
-            }
-		}
+		return null;
+
 	}
 
-	// Handle array of ints from comma-separated string or an existing array.
-	if (in_array('array', $types, true)) {
-		if (is_string($value) && preg_match('/^\d+(,\d+)*$/', $value)) {
+	// ctype_digit() rejected a leading '-', so limit="-1" normalized to null and then hit
+	// int $limit as a TypeError. The pattern also excludes comma lists, which fall through
+	// to the 'array' branch below.
+	if( in_array('int', $types, true) ) {
+
+		if( is_int( $value ) || ( is_string( $value ) && preg_match('/^-?\d+$/', $value) ) ) {
+
+			return (int) $value;
+
+		}
+
+	}
+
+	if( in_array('array', $types, true) ) {
+
+		if( is_string( $value ) && preg_match('/^\d+(,\d+)*$/', $value) ) {
+
 			return array_map('intval', explode(',', $value));
+
 		}
 
-		if (is_array($value)) {
-			// Filter for numeric values and ensure they are integers.
-			$valid_items = array_filter($value, 'is_numeric');
-			if (count($valid_items) > 0) {
-                return array_map('intval', $valid_items);
-            }
+		if( is_array( $value ) ) {
+
+			$ids = array_filter( $value, 'is_numeric' );
+
+			if( $ids ) {
+
+				return array_map('intval', $ids);
+
+			}
+
 		}
+
 	}
 
-	// Handle bool
-	if (in_array('bool', $types, true)) {
-		if (is_bool($value)) return $value;
-		if (in_array(strtolower((string) $value), ['1', 'true', 'on', 'yes'], true)) return true;
-		if (in_array(strtolower((string) $value), ['0', 'false', 'off', 'no'], true)) return false;
+	if( in_array('bool', $types, true) ) {
+
+		if( is_bool( $value ) ) {
+
+			return $value;
+
+		}
+
+		if( in_array( strtolower( (string) $value ), ['1', 'true', 'on', 'yes'], true ) ) {
+
+			return true;
+
+		}
+
+		if( in_array( strtolower( (string) $value ), ['0', 'false', 'off', 'no'], true ) ) {
+
+			return false;
+
+		}
+
 	}
 
-	// Fallback for this specific use case: if it was meant to be an int/array but didn't match, return null.
 	return null;
+
+}
+
+
+/**
+ * The type each shared shortcode attribute normalizes to.
+ *
+ * A const rather than a file-scope variable: plura_includes() runs include_once inside a
+ * function, so a variable declared here would be local to it and never reach $GLOBALS.
+ */
+const AK_ATT_TYPES = [
+	'active'     => 'bool',
+	'auto'       => 'bool',
+	'category'   => ['int', 'array'],
+	'client'     => ['int', 'array'],
+	'client_not' => ['int', 'array'],
+	'collection' => ['int', 'array'],
+	'exclude'    => ['int', 'array'],
+	'id'         => 'int',
+	'ids'        => ['int', 'array'],
+	'include'    => ['int', 'array'],
+	'limit'      => 'int',
+	'material'   => ['int', 'array'],
+	'parent'     => 'int',
+	'rand'       => 'bool',
+	'tag'        => ['int', 'array']
+];
+
+
+/**
+ * Normalize a whole shortcode_atts() result in one pass.
+ *
+ * Shortcode values arrive as strings while ak_posts(), ak_taxonomy() and ak_collections()
+ * declare union types, so ids="1,2" against array|int|null is a TypeError rather than a
+ * coercion. Every shortcode routes its attributes through here before spreading them.
+ *
+ * Keys absent from AK_ATT_TYPES — tax, order, class, label, type, data — pass through.
+ *
+ * @param array $atts     Result of shortcode_atts().
+ * @param array $defaults The defaults that same call was given.
+ * @return array
+ */
+function ak_vals( array $atts, array $defaults = [] ): array {
+
+	foreach( $atts as $key => $value ) {
+
+		if( ! array_key_exists( $key, AK_ATT_TYPES ) ) {
+
+			continue;
+
+		}
+
+		// A value that will not normalize (limit="abc") falls back to the shortcode's own
+		// default rather than to null, which the non-nullable parameters would reject.
+		$atts[ $key ] = ak_val( $value, AK_ATT_TYPES[ $key ] ) ?? ( $defaults[ $key ] ?? null );
+
+	}
+
+	return $atts;
+
 }

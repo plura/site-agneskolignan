@@ -3,69 +3,89 @@
 //Some reading
 //https://support.advancedcustomfields.com/forums/topic/meta-query-with-array-as-values/
 
-function ak_acf($key, $value) {
+/**
+ * meta_query clause matching an ACF relationship field against one or more post IDs.
+ *
+ * ACF serializes these, so the only way to match one is LIKE '"<id>"' — the quotes are
+ * what stop 4 matching 41. Several ids OR together; negating uses NOT LIKE joined by AND,
+ * since a term has to miss every one of them to qualify.
+ *
+ * A term with nothing stored for $key has no meta row at all, so it satisfies neither
+ * form: NOT LIKE excludes it rather than keeping it.
+ *
+ * @param string           $key   Meta key.
+ * @param array|int|string $value One id, a comma-separated list, or an array of ids.
+ * @param bool             $not   Negate the match.
+ * @return array A single clause, or a nested group carrying its own relation.
+ */
+function ak_acf( string $key, array|int|string $value, bool $not = false ): array {
+
+	$ids = is_array( $value ) ? $value : explode( ',', (string) $value );
 
 	$meta = [];
 
-	$ids = explode(',', $value);
-
-	foreach($ids as $id) {
+	foreach( $ids as $id ) {
 
 		$meta[] = [
-			'key'       => $key,
-			'value'     => '"' . $id . '"',
-			'compare'   => 'LIKE'
+			'key'     => $key,
+			'value'   => '"' . trim( (string) $id ) . '"',
+			'compare' => $not ? 'NOT LIKE' : 'LIKE'
 		];
 
 	}
 
-	if( count( $ids ) > 1 ) {
+	if( count( $ids ) === 1 ) {
 
-		$meta['relation'] = 'OR';
-
-	} else {
-
-		$meta = $meta[0];
+		return $meta[0];
 
 	}
+
+	$meta['relation'] = $not ? 'AND' : 'OR';
 
 	return $meta;
 
 }
 
-function ak_collections( 
+function ak_collections(
 	// Query vars: Required
-    string $tax = 'category',
+	string $tax = 'category',
 
 	// Query vars
-    string $order = '',
-    array|int|null $exclude = null,
-    array|int|null $include = null,
-    int $limit = -1,
+	string $order = '',
+	array|int|null $exclude = null,
+	array|int|null $include = null,
+	int $limit = -1,
 	?int $parent = null,
 
-    // Query vars: taxonomies 
-	?int $client = null,
-	?int $client_not = null,
-    array|null $meta = null,
+	// Query vars: taxonomies
+	array|int|null $client = null,
+	array|int|null $client_not = null,
+	array|null $meta = null,
 
-    // Output
-    string|null $label = null
+	// Output
+	string|null $label = null
 ) {
 
-	// Build meta_query based on client and client_not
 	$meta = [];
 
-	if ( $client ) {
+	if( $client ) {
+
 		$meta[] = ak_acf('ak_collection_client', $client);
+
 	}
 
-	if ( $client_not ) {
-		$meta[] = ak_acf('ak_collection_client', $client_not);
+	// client_not built the identical LIKE clause as client, so it included rather than
+	// excluded — the attribute never did what its name says.
+	if( $client_not ) {
+
+		$meta[] = ak_acf('ak_collection_client', $client_not, not: true);
+
 	}
 
-	if ( count($meta) > 1 ) {
+	if( count( $meta ) > 1 ) {
+
 		$meta['relation'] = 'AND';
+
 	}
 
 	return ak_taxonomy(
@@ -79,8 +99,6 @@ function ak_collections(
 		limit:   $limit,
 		parent:  $parent,
 
-/* 		orderby: $orderby, */
-
 		// Query vars: meta
 		meta:    $meta ?: null,
 
@@ -91,45 +109,79 @@ function ak_collections(
 }
 
 function ak_collections_shortcode( $args ) {
-	$atts = shortcode_atts([
+
+	$defaults = [
 		// Query vars: required
-		'tax'       => 'ak_object_collection',
+		'tax'        => 'ak_object_collection',
 
 		// Query vars
-		'order'     => 'term_order',
-		'exclude'   => null,
-		'include'   => null,
-		'limit'     => -1,
-		'parent'    => null,
+		'order'      => 'term_order',
+		'exclude'    => null,
+		'include'    => null,
+		'limit'      => -1,
+		'parent'     => null,
 
 		// Query vars: collections
-		'client'    => null,
-		'client_not'=> null,
+		'client'     => null,
+		'client_not' => null,
 
 		// Output / HTML
-		'label'     => ''/* ,
+		'label'      => ''
+	];
 
-		// Others
-		'auto'      => true */
-	], $args);
-
-	return ak_collections( ...$atts );
+	return ak_collections( ...ak_vals( shortcode_atts( $defaults, $args ), $defaults ) );
 
 }
 
 add_shortcode('ak-collections', 'ak_collections_shortcode');
 
 
-//Collections: Grid Item URL Hook
+/**
+ * Collections: append the client slug to a shared collection's URL.
+ *
+ * A collection used by more than one client links to /collections/{collection}/{client}/
+ * so the archive shows only that client's work; the rewrite rules below turn the second
+ * segment into a query var.
+ *
+ * Which client depends on where the link sits: on a client's page it is that client, on a
+ * single object it is the object's. This was two near-identical filters, one per page
+ * type, and the ak_client half had no taxonomy guard — so any term link on a client page
+ * reached ak_collection_multi_client().
+ *
+ * @param array       $link_atts Attributes plura_wp_link() will render.
+ * @param mixed       $target    Link target; only a WP_Term is of interest here.
+ * @param string|null $context   Context passed down from the caller.
+ * @return array
+ */
 add_filter('plura_wp_link_atts', function( array $link_atts, $target, ?string $context = null ): array {
 
-	global $post;
+	if( ! $target instanceof WP_Term
+		|| $target->taxonomy !== 'ak_object_collection'
+		|| ! ak_collection_multi_client( $target ) ) {
 
-	//if number of clients of one collection is more than one, an extra parameter should be added
-	//to the url in order to filter the collections' objects pertaining only to the client
-	if( $target instanceof WP_Term && is_singular('ak_client') && ak_collection_multi_client( $target ) ) {
+		return $link_atts;
 
-		$link_atts['href'] .= $post->post_name . "/";
+	}
+
+	if( is_singular('ak_client') ) {
+
+		$slug = get_post_field('post_name', get_the_ID());
+
+	} elseif( is_singular('ak_object') ) {
+
+		$client = get_field('ak_object_client');
+
+		$slug = $client instanceof WP_Post ? $client->post_name : null;
+
+	} else {
+
+		return $link_atts;
+
+	}
+
+	if( $slug ) {
+
+		$link_atts['href'] .= $slug . '/';
 
 	}
 
@@ -194,18 +246,21 @@ add_filter('plura_wp_term_featured_image', function( ?string $result, WP_Term $t
 
 
 
-//Collection: Multi Client Check
-function ak_collection_multi_client( $term ) {
+/**
+ * Whether a collection is shared by more than one client.
+ *
+ * get_field() returns false, null or '' for an empty relationship field, and count()
+ * fatals on all three rather than returning 0. Every other get_field() call site in this
+ * plugin guards the same way.
+ *
+ * @param WP_Term $term Collection term.
+ * @return bool
+ */
+function ak_collection_multi_client( $term ): bool {
 
 	$clients = get_field('ak_collection_client', $term);
 
-	if( count( $clients ) > 1 ) {
-
-		return true;
-
-	}
-
-	return false;
+	return is_array( $clients ) && count( $clients ) > 1;
 
 }
 

@@ -1,9 +1,10 @@
 <?php
 
 
-$AK_OBJECTS_RELATED_DEFAULTS = [
-	'limit' => 6
-];
+// Default number of related objects. A const, not a file-scope variable: plura_includes()
+// runs include_once inside a function, so a variable declared here is local to that call —
+// the `global` that used to read it got null, silently discarding both attributes.
+const AK_OBJECTS_RELATED_LIMIT = 6;
 
 
 //Objects: Grid
@@ -13,9 +14,15 @@ $AK_OBJECTS_RELATED_DEFAULTS = [
  *
  * It normalizes attributes inline when passing them to the ak_posts function.
  */
+/**
+ * Shortcode to display a grid of 'ak_object' custom post types.
+ *
+ * @param array|string $args Shortcode attributes.
+ * @return string|null
+ */
 function ak_objects_shortcode( $args ) {
 
-	$atts = shortcode_atts([
+	$defaults = [
 		// Query vars
 		'type'       => 'ak_object',
 		'limit'      => -1,
@@ -38,43 +45,34 @@ function ak_objects_shortcode( $args ) {
 
 		// Special
 		'auto'       => false
-	], $args );
+	];
 
-	// Auto mode for tax context.
-	// Note: This relies on the truthiness of the 'auto' attribute.
-	// For robust boolean handling, 'auto' is normalized in the return statement for other functions,
-	// but here we check it before that. A simple `auto="true"` will work.
-	if ( $atts['auto'] && !ak_val($atts['auto'], 'bool') === false ) {
-		foreach ( ['category', 'collection', 'material'] as $k ) {
-			if ( is_tax('ak_object_' . $k) ) {
-				$atts[$k] = get_queried_object()->term_id;
+	$atts = ak_vals( shortcode_atts( $defaults, $args ), $defaults );
+
+	// Auto mode: on a taxonomy archive, filter by the term being viewed. The test read
+	// !ak_val(...) === false, where ! binds tighter than ===; it agreed with this for every
+	// input, but by accident rather than intent.
+	if( $atts['auto'] === true ) {
+
+		foreach( ['category', 'collection', 'material'] as $k ) {
+
+			if( is_tax('ak_object_' . $k) ) {
+
+				$atts[ $k ] = get_queried_object()->term_id;
+
 				break;
+
 			}
+
 		}
+
 	}
 
-	// Call ak_posts, normalizing values directly in the arguments.
-	return ak_posts(
-		// Query vars
-		type:       $atts['type'],
-		limit:      ak_val($atts['limit'], 'int') ?? -1,
-		ids:        ak_val($atts['ids'], ['int', 'array']),
-		exclude:    ak_val($atts['exclude'], ['int', 'array']),
-		rand:       ak_val($atts['rand'], 'bool'),
-		active:     ak_val($atts['active'], 'bool'),
+	// 'auto' is this shortcode's own; ak_posts() has no such parameter.
+	unset( $atts['auto'] );
 
-		// Query vars: taxonomies
-		collection: ak_val($atts['collection'], ['int', 'array']),
-		category:   ak_val($atts['category'], ['int', 'array']),
-		material:   ak_val($atts['material'], ['int', 'array']),
-		tag:        ak_val($atts['tag'], ['int', 'array']),
-		client:     ak_val($atts['client'], ['int', 'array']),
+	return ak_posts( ...$atts );
 
-		// Output / HTML
-		class:      $atts['class'],
-		label:      $atts['label'],
-		data:       $atts['data']
-	);
 }
 
 add_shortcode('ak-objects', 'ak_objects_shortcode');
@@ -108,7 +106,7 @@ function ak_objects_related( $args ) {
 
 			// Query vars
 			exclude: ak_val( $args['id'], 'int' ),
-			limit: ak_val( $args['limit'] ?? null, 'int' ) ?? 6,
+			limit: ak_val( $args['limit'] ?? null, 'int' ) ?? AK_OBJECTS_RELATED_LIMIT,
 			rand: true,
 
 			// Output / HTML
@@ -123,21 +121,28 @@ function ak_objects_related( $args ) {
 
 function ak_objects_related_shortcode( $args ) {
 
-	global $AK_OBJECTS_RELATED_DEFAULTS;
+	$defaults = [
+		'id'    => null,
+		'limit' => AK_OBJECTS_RELATED_LIMIT
+	];
 
-	$atts = shortcode_atts( $AK_OBJECTS_RELATED_DEFAULTS, $args );
+	// 'id' was missing from these defaults, so shortcode_atts() dropped it and the
+	// attribute never reached ak_objects_related().
+	$atts = ak_vals( shortcode_atts( $defaults, $args ), $defaults );
 
-	if( !empty( $atts['id'] ) || ( empty( $atts['id'] ) && is_singular('ak_object') ) ) {
+	if( empty( $atts['id'] ) ) {
 
-		if( empty( $atts['id'] ) ) {
+		if( ! is_singular('ak_object') ) {
 
-			$atts['id'] = get_the_ID();
+			return null;
 
 		}
 
-		return ak_objects_related( $atts );
+		$atts['id'] = get_the_ID();
 
 	}
+
+	return ak_objects_related( $atts );
 
 }
 
@@ -182,12 +187,7 @@ function ak_object_info(
 
 	foreach( ak_object_info_fields() as $field => $label ) {
 
-		//skip field if key is found in excluded array
-		if( $exclude && in_array($field, (array) $exclude) ) {
-
-			continue;
-
-		} else if( preg_match('/(categories|collections|materials|tags)/', $field) ) {
+		if( $exclude && in_array( $field, (array) $exclude, true ) ) {
 
 			continue;
 
@@ -250,15 +250,21 @@ function ak_object_info(
 
 }
 
-function ak_object_info_fields() {
+/**
+ * Meta rows for ak_object_info(), in display order.
+ *
+ * Categories, collections and materials are absent by design: plura_wp_post_terms()
+ * renders those above the meta table, so listing them here only to skip them in the loop
+ * was noise.
+ *
+ * @return array<string, string> Field key, without its ak_<type>_ prefix, => label.
+ */
+function ak_object_info_fields(): array {
 
 	return [
-		'categories' => __('Categories', 'ak'),
-		'client' => __('Client', 'ak'),
-		'collections' => __('Collections', 'ak'),	
-		'dimensions' => __('Dimensions', 'ak'),	
-		'materials' => __('Materials', 'ak'), 
-		'year' => __('Year', 'ak')
+		'client'     => __('Client', 'ak'),
+		'dimensions' => __('Dimensions', 'ak'),
+		'year'       => __('Year', 'ak')
 	];
 
 }
@@ -296,28 +302,3 @@ function ak_object_info_shortcode( $args ) {
 }
 
 add_shortcode('ak-object-info', 'ak_object_info_shortcode');
-
-
-
-
-//Collections: Grid Item URL Hook
-add_filter('plura_wp_link_atts', function( array $link_atts, $target, ?string $context = null ): array {
-
-	//if number of clients of one collection is more than one, an extra parameter should be added
-	//to the url in order to filter the collections' objects pertaining only to the client
-	if( $target instanceof WP_Term && is_singular('ak_object') && $target->taxonomy === 'ak_object_collection' && ak_collection_multi_client( $target ) ) {
-
-		$client = get_field('ak_object_client');
-
-		if( $client ) {
-
-			$link_atts['href'] .= $client->post_name . "/";
-
-		}
-
-	}
-
-	return $link_atts;
-
-}, 10, 3);
-

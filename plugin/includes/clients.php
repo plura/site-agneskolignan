@@ -4,8 +4,7 @@
 //Clients: Grid
 function ak_clients_shortcode( $args ) {
 
-
-	$atts = shortcode_atts([
+	$defaults = [
 		// Query vars
 		'limit'      => -1,
 		'ids'        => null,
@@ -24,8 +23,9 @@ function ak_clients_shortcode( $args ) {
 		'class'      => null,
 		'label'      => null,
 		'data'       => []
+	];
 
-	], $args );
+	$atts = ak_vals( shortcode_atts( $defaults, $args ), $defaults );
 
 	$atts['type'] = 'ak_client';
 
@@ -38,36 +38,42 @@ add_shortcode('ak-clients', 'ak_clients_shortcode');
 
 //Client: Collections
 add_shortcode('ak-client-collections', function( $args ) {
-	$atts = shortcode_atts([
+
+	$defaults = [
 		// Query vars: taxonomies [required]
-		'tax'       => 'ak_object_collection',
+		'tax'        => 'ak_object_collection',
 
 		// Query vars
-		'order'     => 'term_order',
-		'exclude'   => null,
-		'include'   => null,
-		'limit'     => -1,
-		'parent'    => null,
+		'order'      => 'term_order',
+		'exclude'    => null,
+		'include'    => null,
+		'limit'      => -1,
+		'parent'     => null,
 
 		// Query vars [collections]
-		'client'    => null,
-		'client_not'=> null,
+		'client'     => null,
+		'client_not' => null,
 
 		// Output / HTML
-		'label'     => ''
-	], $args);
+		'label'      => ''
+	];
 
-	if( !empty( $atts['client'] ) || ( empty( $atts['client'] ) && is_singular('ak_client') ) ) {
+	$atts = ak_vals( shortcode_atts( $defaults, $args ), $defaults );
 
-		if( empty( $atts['client'] ) ) {
+	// Outside a client's own page the shortcode needs to be told which client.
+	if( empty( $atts['client'] ) ) {
 
-			$atts['client'] = get_the_ID();
+		if( ! is_singular('ak_client') ) {
+
+			return null;
 
 		}
 
-		return ak_collections( ...$atts );
+		$atts['client'] = get_the_ID();
 
 	}
+
+	return ak_collections( ...$atts );
 
 });
 
@@ -77,23 +83,19 @@ add_shortcode('ak-client-collections', function( $args ) {
 function ak_client_featured_image_id( int $clientID ) {
 
 	$query = new WP_Query([
-		'post_type' => 'ak_object',
+		'post_type'      => 'ak_object',
 		'posts_per_page' => 1,
-		'meta_query' => [
 
-			//'relation' => 'AND', //no need for adding 'relation' since 'AND' is default
-			
+		// meta_query's default relation is AND, which is what these two want.
+		'meta_query'     => [
 			[
-				'key' => 'ak_object_client',
+				'key'   => 'ak_object_client',
 				'value' => $clientID
 			],
-
 			[
-				'key' => 'ak_object_status',
-				'value' => '1',
-				'compare' => '==' // not really needed, this is the default
+				'key'   => 'ak_object_status',
+				'value' => '1'
 			]
-
 		]
 	]);
 
